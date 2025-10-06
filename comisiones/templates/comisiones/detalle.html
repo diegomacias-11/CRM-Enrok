@@ -7,108 +7,195 @@
   <title>Detalle Comisiones</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root { font-family: 'Poppins', sans-serif; }
-    body { min-height: 100vh; display: grid; place-items: center; background: #0f172a; margin: 0; }
-    .card { width: 95vw; max-width: 1200px; margin: 1rem; min-height: 80vh; color: #0b1220; background: #fff; padding: 2rem; border-radius: 18px; box-shadow: 0 18px 40px rgba(0,0,0,.25); }
-    h1 { text-align: center; margin-bottom: 1rem; }
-    .btn { color: #fff; background:#111827; padding:.5rem 1rem; border-radius:8px; text-decoration:none; display:inline-block; border:none; cursor:pointer; font-size:1rem; }
-    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-    th, td { border: 1px solid #cbd5e1; padding: 0.5rem; text-align: left; }
-    th { background: #f1f5f9; }
-    .actions { display:flex; justify-content: space-between; margin-bottom: 20px; }
-.pendiente-box { 
-  width: 200px;         
-  height: 60px;
-  background: linear-gradient(135deg, #003b71 0%, #355f9b 100%); 
-  color: white; 
-  padding: 1.5rem; 
-  border-radius: 12px; 
-  text-align: center; 
-  margin: 0 auto 1.5rem auto;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.pendiente-box h2 { 
-  margin: 0 0 0.3rem 0; 
-  font-size: 0.9rem; 
-  font-weight: 500; 
-}
-.pendiente-box .monto { 
-  font-size: 1.8rem; 
-  font-weight: 600; 
-  margin: 0; 
-}
-.pendiente-box h2 { margin: 0 0 0.5rem 0; font-size: 1.2rem; font-weight: 500; }
-.pendiente-box .monto { font-size: 2.5rem; font-weight: 600; margin: 0; }
+    :root {
+        --fuente-principal: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    *,
+    *::before,
+    *::after {
+        font-family: var(--fuente-principal) !important;
+    }
+    body {
+    min-height: 100vh; 
+    display: grid; 
+    place-items: start center;
+    background: #0f172a; 
+    margin: 0;
+    padding-top: 2rem; 
+    }
+    .card {
+        width: min(680px, 92vw);            
+        max-width: 1200px;      
+        margin: 1rem;           
+        min-height: 80vh;       
+        color: #0b1220; 
+        background: #ffffff;
+        padding: 2rem; 
+        border-radius: 12px;
+        box-shadow: 0 18px 40px rgba(0,0,0,.25);
+    }
+
+    h1 { text-align: center;
+      margin-bottom: 1rem;
+      margin-top: -1rem;
+    }
+    h2 { text-align: center;
+      margin-bottom: 0.5rem;
+      margin-top: 0rem;
+    }
+    .btn {
+        padding: 2px 8px;
+        text-decoration: none;
+        display: inline-block;
+        color: #ffcf56;
+        background: transparent;
+        border: none;
+        border-radius: 12px;
+        font-weight: 200;
+        text-align: center;
+        line-height: 30px;
+        font-size: .9rem;
+        box-sizing: border-box;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .btn_editar{
+      padding: 0px 5px;
+      text-decoration: none;
+      display: inline-block;
+      color: #ffffff;
+      background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
+      border: none;
+      border-radius: 12px;
+      font-weight: 200;
+      text-align: center;
+      line-height: 30px;
+      font-size: .9rem;
+      box-sizing: border-box;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+        background: linear-gradient(135deg, #002952 0%, #244a7a 100%);
+    }
+    .actions {
+        margin-top: .5rem;
+        margin-bottom: .5rem; 
+        display: flex;
+        gap: .6rem;
+        justify-content: center;
+        background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
+        border-radius: 12px;
+    }
+    input, select {
+        width: 100%;
+        padding: .5rem;
+        margin-bottom: .8rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 1rem;
+    }
+
+  .pendiente-box {
+        position: relative;
+        background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
+        color: white; 
+        padding: 0.3rem; 
+        border-radius: 12px; 
+        text-align: center; 
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .pendiente-box h2 { 
+        margin: 0; 
+        font-size: 1rem; 
+        font-weight: 500; 
+      }
+
+      .pendiente-box .monto { 
+        font-size: 1rem; 
+        font-weight: 600; 
+        margin: 0;
+        color: #ffcf56;
+      }
+
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #aebed2; padding: 0.3rem; text-align: center; font-size: 0.85rem; }
+      th { background: rgb(206, 212, 218); text-align: center; color: #003b71; font-size: 1rem; }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>Detalle Comisiones de {{ comisionista }} - {{ mes }}/{{ anio }}</h1>
-
-    <div class="actions">
-      <a href="{{ volver_url }}" class="btn">Volver a Comisionistas</a>
-      <a href="{% url 'registrar_pago' comisionista %}?next={{ next|urlencode }}&mes={{ mes }}&anio={{ anio }}" class="btn">Registrar Pago</a>
-    </div>
-
-    <!-- Recuadro de Pendiente por Pagar -->
+    <h1>Comisiones {{ comisionista }}</h1>
+    <h1>{{ mes }}/{{ anio }}</h1>
     <div class="pendiente-box">
       <h2>Pendiente por Pagar</h2>
       <p class="monto">${{ pendiente_pagar|floatformat:2|intcomma }}</p>
+    </div>
+    
+    <div class="actions">
+      <a href="{{ volver_url }}" class="btn">Volver a Comisionistas</a>
+      <a href="{% url 'registrar_pago' comisionista %}?next={{ next|urlencode }}&mes={{ mes }}&anio={{ anio }}" class="btn">Registrar Pago</a>
     </div>
 
     <div style="display:flex; gap: 20px;">
       <!-- Tabla de comisiones -->
       <div style="flex:1;">
         <h2>Comisiones</h2>
-        <table>
-          <tr>
-            <th>Cliente</th>
-            <th>Monto Comisión</th>
-            <th>Fecha Dispersión</th>
-            <th>Estatus</th>
-          </tr>
-          {% for d in detalle %}
-          <tr>
-            <td>{{ d.cliente.nombre }}</td>
-            <td>${{ d.monto|floatformat:2|intcomma }}</td>
-            <td>{{ d.dispersion.fecha|date:"d/m/Y" }}</td>
-            <td>{{ d.estatus }}</td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="4" style="text-align:center;">No hay comisiones registradas.</td>
-          </tr>
-          {% endfor %}
-        </table>
+        <div style="border:1px solid #aebed2; border-radius:12px; overflow:hidden;">
+          <table>
+            <tr>
+              <th>Cliente</th>
+              <th>Monto Comisión</th>
+              <th>Fecha Dispersión</th>
+              <th>Estatus</th>
+            </tr>
+            {% for d in detalle %}
+            <tr>
+              <td>{{ d.cliente.nombre }}</td>
+              <td>${{ d.monto|floatformat:2|intcomma }}</td>
+              <td>{{ d.dispersion.fecha|date:"d/m/Y" }}</td>
+              <td>{{ d.estatus }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" style="text-align:center;">No hay comisiones registradas.</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
       </div>
 
       <!-- Tabla de abonos/pagos -->
       <div style="flex:1;">
         <h2>Abonos / Pagos</h2>
-        <table>
-          <tr>
-            <th>Fecha Pago</th>
-            <th>Monto</th>
-            <th>Acción</th>
-          </tr>
-          {% for a in abonos %}
-          <tr>
-            <td>{{ a.fecha_pago|date:"d/m/Y" }}</td>
-            <td>${{ a.monto|floatformat:2|intcomma }}</td>
-            <td>
-              <a href="{% url 'editar_pago' comisionista a.id %}?next={{ next|urlencode }}&mes={{ mes }}&anio={{ anio }}" class="btn">Editar</a>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="3" style="text-align:center;">No hay abonos registrados.</td>
-          </tr>
-          {% endfor %}
-        </table>
+        <div style="border:1px solid #aebed2; border-radius:12px; overflow:hidden;">
+          <table>
+            <tr>
+              <th>Fecha Pago</th>
+              <th>Monto</th>
+              <th>Acción</th>
+            </tr>
+            {% for a in abonos %}
+            <tr>
+              <td>{{ a.fecha_pago|date:"d/m/Y" }}</td>
+              <td>${{ a.monto|floatformat:2|intcomma }}</td>
+              <td>
+                <a href="{% url 'editar_pago' comisionista a.id %}?next={{ next|urlencode }}&mes={{ mes }}&anio={{ anio }}" class="btn_editar">Editar</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="3" style="text-align:center;">No hay abonos registrados.</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
       </div>
     </div>
   </div>
 </body>
+</html>

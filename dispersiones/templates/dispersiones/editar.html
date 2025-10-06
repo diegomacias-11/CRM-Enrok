@@ -6,13 +6,97 @@
   <title>Editar Dispersión</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root { font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-    body { min-height: 100vh; display: grid; place-items: center; background: #0f172a; margin: 0; }
-    .card { width: min(680px, 92vw); color: #0b1220; background: #ffffff; padding: 1.25rem 1.25rem 1.5rem; border-radius: 18px; box-shadow: 0 18px 40px rgba(0,0,0,.25); margin: 3rem 0; }
-    .headline { display:flex; align-items:center; justify-content: center; gap:.3rem; margin:.4rem; }
-    .btn{ color: #fff; background:#111827; padding:.5rem 1rem; border-radius:8px; text-decoration:none; display:inline-block; border:none; cursor:pointer; font-size: 1rem; line-height:1; text-align:center; vertical-align:middle; }
-    .actions { margin-top:1rem; display:flex; gap:.6rem; justify-content: center; }
-    input, select, textarea { width:100%; padding:.5rem; margin-bottom:.8rem; border:1px solid #cbd5e1; border-radius:6px; font-size:1rem; }
+    :root {
+        --fuente-principal: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    *,
+    *::before,
+    *::after {
+        font-family: var(--fuente-principal) !important;
+    }
+    body {
+    min-height: 100vh; 
+    display: grid; 
+    place-items: start center;
+    background: #0f172a; 
+    margin: 0;
+    padding-top: 2rem; 
+    }
+    .card {
+        width: min(680px, 92vw);            
+        max-width: 1200px;      
+        margin: 1rem;           
+        min-height: 80vh;       
+        color: #0b1220; 
+        background: #ffffff;
+        padding: 2rem; 
+        border-radius: 12px;
+        box-shadow: 0 18px 40px rgba(0,0,0,.25);
+    }
+
+    h1 { text-align: center;
+      margin-bottom: 1rem;
+      margin-top: -1rem;
+    }
+    .btn, a.button {
+      height: 50px;
+      width: 100px;
+      margin: 1rem;
+      text-decoration: none;
+      display: inline-block;
+      color: #ffffff;
+      background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
+      border: none;
+      border-radius: 12px;
+      font-weight: 200;
+      text-align: center;
+      line-height: 50px; /* igual al height */
+      font-size: .9rem;
+      box-sizing: border-box;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn_eliminar{
+      height: 50px;
+      width: 100px;
+      margin: 1rem;
+      text-decoration: none;
+      display: inline-block;
+      color: #ffffff;
+      background: linear-gradient(135deg, #891111 0%, #e83b3b 100%);
+      border: none;
+      border-radius: 12px;
+      font-weight: 200;
+      text-align: center;
+      line-height: 50px; /* igual al height */
+      font-size: .9rem;
+      box-sizing: border-box;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn_eliminar:hover {
+            background: linear-gradient(135deg, #d40606 0%, #ff5959 100%);
+        }
+
+    .btn:hover {
+        background: linear-gradient(135deg, #002952 0%, #244a7a 100%);
+    }
+    .actions { 
+        margin-top:1rem; 
+        display:flex; 
+        gap:.6rem;
+        justify-content: center;
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: .5rem;
+        margin-bottom: .8rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -32,10 +116,10 @@
     </form>
 
     <!-- Formulario para eliminar -->
-    <form action="{% url 'dispersiones_eliminar' dispersion.id %}" method="post" style="margin-top:1rem;">
+    <form action="{% url 'dispersiones_eliminar' dispersion.id %}" method="post">
       {% csrf_token %}
       <input type="hidden" name="next" value="{{ next_url }}">
-      <button type="submit" class="btn" onclick="return confirm('¿Estás seguro de eliminar esta dispersión?')" style="background:red;">Eliminar</button>
+      <button type="submit" class="btn_eliminar" onclick="return confirm('¿Estás seguro de eliminar esta dispersión?')">Eliminar</button>
     </form>
 
   </div>

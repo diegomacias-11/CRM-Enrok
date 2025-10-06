@@ -7,7 +7,14 @@
   <title>Lista de Comisiones</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root { font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    :root {
+        --fuente-principal: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    *,
+    *::before,
+    *::after {
+        font-family: var(--fuente-principal) !important;
+    }
     body { 
     min-height: 100vh; 
     display: grid; 
@@ -145,26 +152,29 @@
       </form>
     </div>
 
-    <table>
-      <tr>
-        <th>Comisionista</th>
-        <th>Total Comisiones</th>
-        <th>Acciones</th>
-      </tr>
-      {% for c in comisionistas %}
-      <tr>
-        <td>{{ c.comisionista }}</td>
-        <td>${{ c.total|floatformat:2|intcomma }}</td>
-        <td>
-          <a href="{% url 'comisiones_detalle' c.comisionista %}?volver={{ request.get_full_path|urlencode }}" class="detalle">Detalle</a>
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="3" style="text-align:center;">No hay comisiones registradas.</td>
-      </tr>
-      {% endfor %}
-    </table>
+    <!-- Mini-card para tabla de comisiones -->
+    <div style="border:1px solid #aebed2; border-radius:12px; overflow:hidden; margin-top:1rem;">
+      <table>
+        <tr>
+          <th>Comisionista</th>
+          <th>Total Comisiones</th>
+          <th>Acciones</th>
+        </tr>
+        {% for c in comisionistas %}
+        <tr>
+          <td>{{ c.comisionista }}</td>
+          <td>${{ c.total|floatformat:2|intcomma }}</td>
+          <td>
+            <a href="{% url 'comisiones_detalle' c.comisionista %}?volver={{ request.get_full_path|urlencode }}" class="detalle">Detalle</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="3" style="text-align:center;">No hay comisiones registradas.</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
   </div>
 </body>
 </html>

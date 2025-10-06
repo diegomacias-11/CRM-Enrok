@@ -6,7 +6,14 @@
   <title>Lista de Clientes</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
- :root { font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    :root {
+        --fuente-principal: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    *,
+    *::before,
+    *::after {
+        font-family: var(--fuente-principal) !important;
+    }
     body { 
     min-height: 100vh; 
     display: grid; 
@@ -66,13 +73,13 @@
 
     .btn:hover,
     .editar:hover,
-    .filtros:hover {
+    .filtros:hover, select:hover {
         background: linear-gradient(135deg, #002952 0%, #244a7a 100%);
     }
 
-.filtros {
-      padding: 7px 8px;      
-        font-size: .9rem;           
+    select {
+        padding: 7px 8px;
+        font-size: .9rem;
         color: #ffffff;
         background: transparent;
         border: none;
@@ -83,7 +90,8 @@
         cursor: pointer;
         transition: 0.3s;
     }
-    .filtros select {
+
+    select option {
         color: #00101f;
         background-color: #ffffff;
         text-align: center;
@@ -135,13 +143,14 @@
   <div class="card">
     <h1>Clientes Activos</h1>
 
-  <div class="pendiente-box">
-    Total <strong class="monto">{{ clientes|length }}</strong>
-  </div>
+    <div class="pendiente-box">
+      Total <strong class="monto">{{ clientes|length }}</strong>
+    </div>
   
     <div class="actions">
       <form method="get" style="display:inline-block;">
-        <select class="filtros" name="cliente">
+        <a href="{% url 'clientes_agregar' %}" class="btn">Agregar Nuevo Cliente</a>
+        <select name="cliente">
           <option value="">-- Todos los clientes --</option>
           {% for c in clientes %}
             <option value="{{ c.id }}" {% if cliente_seleccionado == c.id|stringformat:"s" %}selected{% endif %}>
@@ -151,34 +160,35 @@
         </select>
         <button type="submit" class="btn">Filtrar</button>
       </form>
-
-      <a href="{% url 'clientes_agregar' %}" class="btn">Agregar Nuevo Cliente</a>
     </div>
 
-    <table>
-      <tr>
-        <th>Nombre</th>
-        <th>Servicio</th>
-        <th>Comisión PROCOM</th>
-        <th>Fecha Registro</th>
-        <th>Acciones</th>
-      </tr>
-      {% for cliente in clientes %}
-      <tr>
-        <td>{{ cliente.nombre }}</td>
-        <td>{{ cliente.servicio }}</td>
-        <td>{{ cliente.comision_procom }}%</td>
-        <td>{{ cliente.fecha_registro|date:"d/m/Y H:i" }}</td>
-        <td>
-          <a href="{% url 'clientes_editar' cliente.id %}" class="editar">Editar</a>
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="5" style="text-align:center;">No hay clientes registrados.</td>
-      </tr>
-      {% endfor %}
-    </table>
+    <!-- Mini-card para tabla de clientes -->
+    <div style="border:1px solid #aebed2; border-radius:12px; overflow:hidden; margin-top:1rem;">
+      <table>
+        <tr>
+          <th>Nombre</th>
+          <th>Servicio</th>
+          <th>Comisión PROCOM</th>
+          <th>Fecha Registro</th>
+          <th>Acciones</th>
+        </tr>
+        {% for cliente in clientes %}
+        <tr>
+          <td>{{ cliente.nombre }}</td>
+          <td>{{ cliente.servicio }}</td>
+          <td>{{ cliente.comision_procom }}%</td>
+          <td>{{ cliente.fecha_registro|date:"d/m/Y H:i" }}</td>
+          <td>
+            <a href="{% url 'clientes_editar' cliente.id %}" class="editar">Editar</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="text-align:center;">No hay clientes registrados.</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
   </div>
 </body>
 </html>
