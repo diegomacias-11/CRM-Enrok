@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agregar Dispersión</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    body { min-height: 100vh; display: grid; place-items: center; background: #0f172a; margin: 0; }
+    .card { width: min(680px, 92vw); color: #0b1220; background: #ffffff; padding: 1.25rem 1.25rem 1.5rem; border-radius: 18px; box-shadow: 0 18px 40px rgba(0,0,0,.25); margin: 3rem 0; }
+    .headline { display:flex; align-items:center; justify-content: center; gap:.3rem; margin:.4rem; }
+    .btn{ color: #fff; background:#111827; padding:.5rem 1rem; border-radius:8px; text-decoration:none; display:inline-block; border:none; cursor:pointer; font-size: 1rem; line-height:1; text-align:center; vertical-align:middle; }
+    .actions { margin-top:1rem; display:flex; gap:.6rem; justify-content: center; }
+    input, select, textarea { width:100%; padding:.5rem; margin-bottom:.8rem; border:1px solid #cbd5e1; border-radius:6px; font-size:1rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 class="headline">Agregar Dispersión</h1>
+
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <!-- Guardamos la URL de origen -->
+      <input type="hidden" name="next" value="{{ next_url }}">
+      <div class="actions">
+        <button type="submit" class="btn">Guardar</button>
+        <a href="{{ next_url }}" class="btn">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

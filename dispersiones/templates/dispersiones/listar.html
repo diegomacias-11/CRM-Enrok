@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load humanize %}
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lista de Dispersión</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    body { 
+        min-height: 100vh; 
+        display: grid; 
+        place-items: center; 
+        background: #0f172a; 
+        margin: 0; 
+    }
+
+    .card {
+        width: 95vw;            
+        max-width: 1200px;      
+        margin: 1rem;           
+        min-height: 80vh;       
+        color: #0b1220; 
+        background: #ffffff;
+        padding: 2rem; 
+        border-radius: 18px;
+        box-shadow: 0 18px 40px rgba(0,0,0,.25);
+    }
+
+    h1 { text-align: center; margin-bottom: 1rem; }
+
+    .btn{ 
+        color: #fff; 
+        background:#111827; 
+        padding:.5rem 1rem; 
+        border-radius:8px;
+        text-decoration:none; 
+        display:inline-block; 
+        border:none;
+        cursor:pointer;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        line-height: 1; 
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .actions {
+        margin-top: 1rem;
+        margin-bottom: 1.5rem; 
+        display: flex;
+        gap: .6rem;
+        justify-content: center;
+    }
+
+    .filtro {
+        display: flex;
+        gap: .5rem;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    .filtro input {
+        padding: .4rem .6rem;
+        border-radius: 6px;
+        border: 1px solid #cbd5e1;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #cbd5e1; padding: 0.5rem; text-align: left; }
+    th { background: #f1f5f9; }
+
+    .pendiente-box {
+      position: absolute;  /* lo hace flotante */
+      top: 50px;           /* distancia desde arriba */
+      left: 150px;          /* distancia desde la izquierda */
+      width: 150px;         
+      height: 50px;        /* un poco más alto para el monto */
+      background: linear-gradient(135deg, #003b71 0%, #355f9b 100%); 
+      color: white; 
+      padding: 1rem; 
+      border-radius: 12px; 
+      text-align: center; 
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10; /* para que quede encima de otros elementos */
+    }
+
+    .pendiente-box h2 { 
+      margin: 0 0 0.3rem 0; 
+      font-size: 0.8rem; 
+      font-weight: 500; 
+    }
+
+    .pendiente-box .monto { 
+      font-size: 1rem; 
+      font-weight: 600; 
+      margin: 0; 
+    }
+
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Dispersiones</h1>
+    <div class="pendiente-box">
+      <h2>Total de Dispersiones</h2>
+      <div class="monto">${{ total_montos|floatformat:2|intcomma }}</div>
+    </div>
+    <div class="actions">
+      <a href="{% url 'dispersiones_agregar' %}" class="btn">Agregar Nueva Dispersión</a>
+    </div>
+
+    <form method="get" class="filtro">
+      <select name="cliente">
+        <option value="">-- Todos los clientes --</option>
+        {% for c in clientes %}
+          <option value="{{ c.id }}" {% if cliente|stringformat:"s" == c.id|stringformat:"s" %}selected{% endif %}>
+            {{ c.nombre }}
+          </option>
+        {% endfor %}
+      </select>
+      <select name="mes" required>
+        <option value="1" {% if mes == "1" %}selected{% endif %}>Enero</option>
+        <option value="2" {% if mes == "2" %}selected{% endif %}>Febrero</option>
+        <option value="3" {% if mes == "3" %}selected{% endif %}>Marzo</option>
+        <option value="4" {% if mes == "4" %}selected{% endif %}>Abril</option>
+        <option value="5" {% if mes == "5" %}selected{% endif %}>Mayo</option>
+        <option value="6" {% if mes == "6" %}selected{% endif %}>Junio</option>
+        <option value="7" {% if mes == "7" %}selected{% endif %}>Julio</option>
+        <option value="8" {% if mes == "8" %}selected{% endif %}>Agosto</option>
+        <option value="9" {% if mes == "9" %}selected{% endif %}>Septiembre</option>
+        <option value="10" {% if mes == "10" %}selected{% endif %}>Octubre</option>
+        <option value="11" {% if mes == "11" %}selected{% endif %}>Noviembre</option>
+        <option value="12" {% if mes == "12" %}selected{% endif %}>Diciembre</option>
+      </select>
+
+      <select name="anio">
+        <option value="">-- Año --</option>
+        {% for year in anios %}
+          <option value="{{ year }}" {% if anio == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+        {% endfor %}
+      </select>
+
+      <button type="submit" class="btn">Filtrar</button>
+    </form>
+
+    <table>
+      <tr>
+        <th>Fecha</th>
+        <th>Nombre</th>
+        <th>Factura</th>
+        <th>Num.</th>
+        <th>Monto</th>
+        <th>Comisión</th>
+        <th>Honorarios</th>
+        <th>Estatus</th>
+        <th>Comentarios</th>
+        <th>Periodo</th>
+        <th>Acciones</th>
+        <th>Pago</th>
+      </tr>
+      {% for disp in dispersiones %}
+      <tr>
+        <td>{{ disp.fecha|date:"d/m/Y" }}</td>
+        <td>{{ disp.cliente.nombre }}</td>
+        <td>{{ disp.factura }}</td>
+        <td>{{disp.factura_honorarios}}</td>
+        <td>${{ disp.monto|floatformat:2|intcomma }}</td>
+        <td>${{ disp.comision|floatformat:2|intcomma }}</td>
+        <td>${{ disp.total_honorarios|floatformat:2|intcomma }}</td>
+        <td>{{ disp.estatus }}</td>
+        <td>{{ disp.comentarios }}</td>
+        <td>{{ disp.estatus_periodo }}</td>
+
+        <td>
+          <a href="{% url 'dispersiones_editar' disp.id %}" class="btn">Editar</a>
+        </td>
+        <td>
+          <form method="post" action="{% url 'actualizar_estatus_dispersion' %}">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{ disp.id }}">
+            <select name="estatus_pago">
+              <option value="Pendiente" {% if disp.estatus_pago == "Pendiente" %}selected{% endif %}>Pendiente</option>
+              <option value="Pagado" {% if disp.estatus_pago == "Pagado" %}selected{% endif %}>Pagado</option>
+            </select>
+            <button type="submit" class="btn" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">OK</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="11" style="text-align:center;">No hay dispersión registrada.</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</body>
+</html>
