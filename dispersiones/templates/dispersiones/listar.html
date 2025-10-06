@@ -155,7 +155,40 @@
 
   <div class="actions">
     <form method="get" class="filtro">
-      <!-- tus filtros y botones aquí -->
+      <a href="{% url 'dispersiones_agregar' %}" class="btn_filtros">Agregar Nueva Dispersión</a>
+
+      <select class="filtros" name="cliente">
+        <option value="">-- Todos los clientes --</option>
+        {% for c in clientes %}
+          <option value="{{ c.id }}" {% if cliente|stringformat:"s" == c.id|stringformat:"s" %}selected{% endif %}>
+            {{ c.nombre }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <select class="filtros" name="mes" required>
+        <option value="1" {% if mes == "1" %}selected{% endif %}>Enero</option>
+        <option value="2" {% if mes == "2" %}selected{% endif %}>Febrero</option>
+        <option value="3" {% if mes == "3" %}selected{% endif %}>Marzo</option>
+        <option value="4" {% if mes == "4" %}selected{% endif %}>Abril</option>
+        <option value="5" {% if mes == "5" %}selected{% endif %}>Mayo</option>
+        <option value="6" {% if mes == "6" %}selected{% endif %}>Junio</option>
+        <option value="7" {% if mes == "7" %}selected{% endif %}>Julio</option>
+        <option value="8" {% if mes == "8" %}selected{% endif %}>Agosto</option>
+        <option value="9" {% if mes == "9" %}selected{% endif %}>Septiembre</option>
+        <option value="10" {% if mes == "10" %}selected{% endif %}>Octubre</option>
+        <option value="11" {% if mes == "11" %}selected{% endif %}>Noviembre</option>
+        <option value="12" {% if mes == "12" %}selected{% endif %}>Diciembre</option>
+      </select>
+
+      <select class="filtros" name="anio">
+        <option value="">-- Año --</option>
+        {% for year in anios %}
+          <option value="{{ year }}" {% if anio == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+        {% endfor %}
+      </select>
+
+      <button type="submit" class="btn_filtros">Filtrar</button>
     </form>
   </div>
 
@@ -195,11 +228,10 @@
           <form method="post" action="{% url 'actualizar_estatus_dispersion' %}">
             {% csrf_token %}
             <input type="hidden" name="id" value="{{ disp.id }}">
-            <select class="filtro_pagado" name="estatus_pago">
+            <select class="filtro_pagado" name="estatus_pago" onchange="this.form.submit()">
               <option value="Pendiente" {% if disp.estatus_pago == "Pendiente" %}selected{% endif %}>Pendiente</option>
               <option value="Pagado" {% if disp.estatus_pago == "Pagado" %}selected{% endif %}>Pagado</option>
             </select>
-            <button type="submit" class="ok">OK</button>
           </form>
         </td>
       </tr>

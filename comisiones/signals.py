@@ -36,3 +36,37 @@ def crear_comisiones(sender, instance, created, **kwargs):
                 )
             except Exception as e:
                 print(f"⚠️ Error creando comisión para {comisionista}: {e}")
+
+@receiver(post_save, sender=Dispersion)
+def actualizar_estatus_comisiones(sender, instance, **kwargs):
+    """
+    Cada vez que se guarda una dispersión (nueva o editada),
+    se revisan todas las dispersiones del cliente en el mismo mes/año.
+    Si todas están pagadas, se liberan las comisiones.
+    Si alguna está pendiente, se reflejan los estatus reales.
+    """
+    cliente = instance.cliente
+    mes = instance.fecha.month
+    anio = instance.fecha.year
+
+    # Traemos todas las dispersiones de ese cliente en el mismo mes/año
+    todas_dispersiones = Dispersion.objects.filter(
+        cliente=cliente,
+        fecha__month=mes,
+        fecha__year=anio
+    )
+
+    if not todas_dispersiones.exists():
+        return
+
+    # Si todas están en "Pagado", liberamos
+    if all(d.estatus_pago == "Pagado" for d in todas_dispersiones):
+        Comision.objects.filter(
+            cliente=cliente,
+            dispersion__fecha__month=mes,
+            dispersion__fecha__year=anio
+        ).update(estatus="Liberado")
+    else:
+        # Si hay alguna pendiente, reflejamos el estatus real
+        for d in todas_dispersiones:
+            Comision.objects.filter(dispersion=d).update(estatus=d.estatus_pago)
