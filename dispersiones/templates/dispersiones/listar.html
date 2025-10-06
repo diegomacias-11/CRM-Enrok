@@ -9,13 +9,13 @@
   <style>
     :root { font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
     body { 
-        min-height: 100vh; 
-        display: grid; 
-        place-items: center; 
-        background: #0f172a; 
-        margin: 0; 
+    min-height: 100vh; 
+    display: grid; 
+    place-items: start center;
+    background: #0f172a; 
+    margin: 0;
+    padding-top: 2rem; 
     }
-
     .card {
         width: 95vw;            
         max-width: 1200px;      
@@ -24,82 +24,123 @@
         color: #0b1220; 
         background: #ffffff;
         padding: 2rem; 
-        border-radius: 18px;
+        border-radius: 12px;
         box-shadow: 0 18px 40px rgba(0,0,0,.25);
     }
-
-    h1 { text-align: center; margin-bottom: 1rem; }
-
-    .btn{ 
-        color: #fff; 
-        background:#111827; 
-        padding:.5rem 1rem; 
-        border-radius:8px;
-        text-decoration:none; 
-        display:inline-block; 
-        border:none;
-        cursor:pointer;
-        font-family: 'Poppins', sans-serif;
-        font-size: 1rem;
-        line-height: 1; 
-        text-align: center;
-        vertical-align: middle;
+    h1 { text-align: center;
+      margin-bottom: 1rem;
+      margin-top: -1rem;
     }
-
+    .btn_filtros{
+      padding: 2px 8px;
+      text-decoration: none;
+      display: inline-block;
+      color: #ffcf56;
+      background: transparent;
+      border: none;
+      border-radius: 12px;
+      font-weight: 200;
+      text-align: center;
+      line-height: 30px;
+      font-size: .9rem;
+      box-sizing: border-box;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .editar, .ok{
+      padding: 0px 5px;
+      text-decoration: none;
+      display: inline-block;
+      color: #ffffff;
+      background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
+      border: none;
+      border-radius: 12px;
+      font-weight: 200;
+      text-align: center;
+      line-height: 30px;
+      font-size: .9rem;
+      box-sizing: border-box;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .filtros {
+      padding: 7px 8px;      
+        font-size: .9rem;           
+        color: #ffffff;
+        background: transparent;
+        border: none;
+        border-radius: 12px;
+        font-weight: 200;
+        text-align: center;
+        box-sizing: border-box;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .filtro_pagado{
+      padding: 5px 5px;      
+        font-size: .9rem;           
+        color: #ffffff;
+        background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
+        border: none;
+        border-radius: 12px;
+        font-weight: 200;
+        text-align: center;
+        box-sizing: border-box;
+        cursor: pointer;
+        transition: 0.3s;  
+    }
+    .filtros select,
+    .filtros option,
+    .filtro_pagado select,
+    .filtro_pagado option {
+        color: #00101f;
+        background-color: #ffffff;
+        text-align: center;
+    }
+    button:hover,
+    .btn_agregar:hover,
+    .btn_filtros:hover,
+    .editar:hover,
+    .ok:hover,
+    .filtro_pagado:hover,
+    .filtros:hover {
+        background: linear-gradient(135deg, #002952 0%, #244a7a 100%);
+    }
     .actions {
-        margin-top: 1rem;
-        margin-bottom: 1.5rem; 
+        margin-top: .5rem;
+        margin-bottom: .5rem; 
         display: flex;
         gap: .6rem;
         justify-content: center;
+        background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
+        border-radius: 12px;
     }
-
-    .filtro {
-        display: flex;
-        gap: .5rem;
-        justify-content: center;
-        margin-bottom: 1rem;
-    }
-
-    .filtro input {
-        padding: .4rem .6rem;
-        border-radius: 6px;
-        border: 1px solid #cbd5e1;
-    }
-
     table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #cbd5e1; padding: 0.5rem; text-align: left; }
-    th { background: #f1f5f9; }
-
+    th, td { border: 1px solid #aebed2; padding: 0.3rem; text-align: center; font-size: 0.85rem; }
+    th { background: rgb(206, 212, 218); text-align: center; color: #003b71; font-size: 1rem; }
     .pendiente-box {
-      position: absolute;  /* lo hace flotante */
-      top: 50px;           /* distancia desde arriba */
-      left: 150px;          /* distancia desde la izquierda */
-      width: 150px;         
-      height: 50px;        /* un poco más alto para el monto */
-      background: linear-gradient(135deg, #003b71 0%, #355f9b 100%); 
+      position: relative;
+      background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
       color: white; 
-      padding: 1rem; 
+      padding: 0.3rem; 
       border-radius: 12px; 
       text-align: center; 
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      z-index: 10; /* para que quede encima de otros elementos */
     }
-
     .pendiente-box h2 { 
-      margin: 0 0 0.3rem 0; 
-      font-size: 0.8rem; 
+      margin: 0; 
+      font-size: 1rem; 
       font-weight: 500; 
     }
 
     .pendiente-box .monto { 
       font-size: 1rem; 
       font-weight: 600; 
-      margin: 0; 
+      margin: 0;
+      color: #ffcf56;
     }
 
   </style>
@@ -108,15 +149,12 @@
   <div class="card">
     <h1>Dispersiones</h1>
     <div class="pendiente-box">
-      <h2>Total de Dispersiones</h2>
+      <h2>Total</h2>
       <div class="monto">${{ total_montos|floatformat:2|intcomma }}</div>
-    </div>
+  </div>
     <div class="actions">
-      <a href="{% url 'dispersiones_agregar' %}" class="btn">Agregar Nueva Dispersión</a>
-    </div>
-
-    <form method="get" class="filtro">
-      <select name="cliente">
+      <form method="get" class="filtro">
+      <select class="filtros" name="cliente">
         <option value="">-- Todos los clientes --</option>
         {% for c in clientes %}
           <option value="{{ c.id }}" {% if cliente|stringformat:"s" == c.id|stringformat:"s" %}selected{% endif %}>
@@ -124,7 +162,7 @@
           </option>
         {% endfor %}
       </select>
-      <select name="mes" required>
+      <select class="filtros" name="mes" required>
         <option value="1" {% if mes == "1" %}selected{% endif %}>Enero</option>
         <option value="2" {% if mes == "2" %}selected{% endif %}>Febrero</option>
         <option value="3" {% if mes == "3" %}selected{% endif %}>Marzo</option>
@@ -139,15 +177,18 @@
         <option value="12" {% if mes == "12" %}selected{% endif %}>Diciembre</option>
       </select>
 
-      <select name="anio">
+      <select  class="filtros" name="anio">
         <option value="">-- Año --</option>
         {% for year in anios %}
           <option value="{{ year }}" {% if anio == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
         {% endfor %}
       </select>
 
-      <button type="submit" class="btn">Filtrar</button>
+      <button type="submit" class="btn_filtros">Filtrar</button>
+
+      <a href="{% url 'dispersiones_agregar' %}" class="btn_filtros">Agregar Nueva Dispersión</a>
     </form>
+    </div>
 
     <table>
       <tr>
@@ -178,17 +219,17 @@
         <td>{{ disp.estatus_periodo }}</td>
 
         <td>
-          <a href="{% url 'dispersiones_editar' disp.id %}" class="btn">Editar</a>
+          <a href="{% url 'dispersiones_editar' disp.id %}" class="editar">Editar</a>
         </td>
         <td>
           <form method="post" action="{% url 'actualizar_estatus_dispersion' %}">
             {% csrf_token %}
             <input type="hidden" name="id" value="{{ disp.id }}">
-            <select name="estatus_pago">
+            <select class="filtro_pagado" name="estatus_pago">
               <option value="Pendiente" {% if disp.estatus_pago == "Pendiente" %}selected{% endif %}>Pendiente</option>
               <option value="Pagado" {% if disp.estatus_pago == "Pagado" %}selected{% endif %}>Pagado</option>
             </select>
-            <button type="submit" class="btn" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">OK</button>
+            <button type="submit" class="ok">OK</button>
           </form>
         </td>
       </tr>
