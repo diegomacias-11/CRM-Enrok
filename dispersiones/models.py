@@ -4,18 +4,19 @@ from clientes.models import Cliente
 from decimal import Decimal
 
 class Dispersion(models.Model):
+    fecha = models.DateTimeField(default=timezone.now)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     factura = models.CharField(max_length=100)
-    factura_honorarios = models.CharField(max_length=100, blank=True, null=True)
+    num_factura = models.CharField(max_length=100, blank=True, null=True)
     monto = models.DecimalField(max_digits=12, decimal_places=2)
-    comision_procom = models.DecimalField(max_digits=5, decimal_places=2, editable=False)
     comision = models.DecimalField(max_digits=12, decimal_places=2, editable=False)
+    num_factura_honorarios = models.CharField(max_length=100, blank=True, null=True)
     total_honorarios = models.DecimalField(max_digits=12, decimal_places=2, editable=False)
     estatus = models.CharField(max_length=50)
-    estatus_periodo = models.CharField(max_length=50)
     comentarios = models.TextField(blank=True, null=True)
-    fecha = models.DateTimeField(default=timezone.now)
+    estatus_periodo = models.CharField(max_length=50)
     estatus_pago = models.CharField(max_length=50, default="Pendiente")
+    comision_procom = models.DecimalField(max_digits=5, decimal_places=2, editable=False)
 
     def save(self, *args, **kwargs):
         # Solo recalculamos si hay monto y cliente

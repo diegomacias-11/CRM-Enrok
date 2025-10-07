@@ -7,7 +7,9 @@
   <title>Lista de Dispersión</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root { font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    :root { --fuente-principal: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    *, *::before, *::after { font-family: var(--fuente-principal) !important; }
+
     body { 
     min-height: 100vh; 
     display: grid; 
@@ -32,22 +34,21 @@
       margin-top: -1rem;
     }
     .btn_filtros{
-      padding: 2px 8px;
-      text-decoration: none;
-      display: inline-block;
-      color: #ffcf56;
-      background: transparent;
-      border: none;
-      border-radius: 12px;
-      font-weight: 200;
-      text-align: center;
-      line-height: 30px;
-      font-size: .9rem;
-      box-sizing: border-box;
-      cursor: pointer;
-      transition: 0.3s;
+        padding: 2px 8px;
+        text-decoration: none;
+        display: inline-block;
+        color: #ffcf56;
+        background: transparent;
+        border: none;
+        font-weight: 200;
+        text-align: center;
+        line-height: 30px;
+        font-size: .9rem;
+        box-sizing: border-box;
+        cursor: pointer;
+        transition: 0.3s;
     }
-    .editar, .ok{
+    .editar{
       padding: 0px 5px;
       text-decoration: none;
       display: inline-block;
@@ -63,13 +64,12 @@
       cursor: pointer;
       transition: 0.3s;
     }
-    .filtros {
-      padding: 7px 8px;      
-        font-size: .9rem;           
+    select {
+        padding: 7px 8px;
+        font-size: .9rem;
         color: #ffffff;
         background: transparent;
         border: none;
-        border-radius: 12px;
         font-weight: 200;
         text-align: center;
         box-sizing: border-box;
@@ -77,7 +77,7 @@
         transition: 0.3s;
     }
     .filtro_pagado{
-      padding: 5px 5px;      
+      padding: 4px 3px;      
         font-size: .9rem;           
         color: #ffffff;
         background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
@@ -89,9 +89,8 @@
         cursor: pointer;
         transition: 0.3s;  
     }
-    .filtros select,
+    select option,
     .filtros option,
-    .filtro_pagado select,
     .filtro_pagado option {
         color: #00101f;
         background-color: #ffffff;
@@ -101,9 +100,8 @@
     .btn_agregar:hover,
     .btn_filtros:hover,
     .editar:hover,
-    .ok:hover,
     .filtro_pagado:hover,
-    .filtros:hover {
+    select:hover {
         background: linear-gradient(135deg, #002952 0%, #244a7a 100%);
     }
     .actions {
@@ -114,6 +112,16 @@
         justify-content: center;
         background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
         border-radius: 12px;
+    }
+    .actions form {
+      display: flex;
+      width: 100%;
+      gap: 0.6rem;
+    }
+    .actions form > * {
+      flex: 1;
+      text-align: center;
+      min-width: 0; 
     }
     table { width: 100%; border-collapse: collapse; }
     th, td { border: 1px solid #aebed2; padding: 0.3rem; text-align: center; font-size: 0.85rem; }
@@ -155,9 +163,9 @@
 
   <div class="actions">
     <form method="get" class="filtro">
-      <a href="{% url 'dispersiones_agregar' %}" class="btn_filtros">Agregar Nueva Dispersión</a>
+      <a href="{% url 'dispersiones_agregar' %}" class="btn_filtros" style="border-radius: 12px 0 0 12px;">Agregar Nueva Dispersión</a>
 
-      <select class="filtros" name="cliente">
+      <select name="cliente">
         <option value="">-- Todos los clientes --</option>
         {% for c in clientes %}
           <option value="{{ c.id }}" {% if cliente|stringformat:"s" == c.id|stringformat:"s" %}selected{% endif %}>
@@ -166,7 +174,7 @@
         {% endfor %}
       </select>
 
-      <select class="filtros" name="mes" required>
+      <select name="mes" required>
         <option value="1" {% if mes == "1" %}selected{% endif %}>Enero</option>
         <option value="2" {% if mes == "2" %}selected{% endif %}>Febrero</option>
         <option value="3" {% if mes == "3" %}selected{% endif %}>Marzo</option>
@@ -188,7 +196,7 @@
         {% endfor %}
       </select>
 
-      <button type="submit" class="btn_filtros">Filtrar</button>
+      <button type="submit" class="btn_filtros" style="border-radius: 0 12px 12px 0">Filtrar</button>
     </form>
   </div>
 
@@ -202,6 +210,7 @@
         <th>Num.</th>
         <th>Monto</th>
         <th>Comisión</th>
+        <th>Num. H</th>        
         <th>Honorarios</th>
         <th>Estatus</th>
         <th>Comentarios</th>
@@ -214,9 +223,10 @@
         <td>{{ disp.fecha|date:"d/m/Y" }}</td>
         <td>{{ disp.cliente.nombre }}</td>
         <td>{{ disp.factura }}</td>
-        <td>{{disp.factura_honorarios|default_if_none:""}}</td>
+        <td>{{disp.num_factura|default_if_none:""}}</td>
         <td>${{ disp.monto|floatformat:2|intcomma }}</td>
         <td>${{ disp.comision|floatformat:2|intcomma }}</td>
+        <td>{{disp.num_factura_honorarios|default_if_none:""}}</td>        
         <td>${{ disp.total_honorarios|floatformat:2|intcomma }}</td>
         <td>{{ disp.estatus }}</td>
         <td>{{ disp.comentarios }}</td>

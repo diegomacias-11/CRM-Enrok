@@ -44,7 +44,6 @@
         color: #ffcf56;
         background: transparent;
         border: none;
-        border-radius: 12px;
         font-weight: 200;
         text-align: center;
         line-height: 30px;
@@ -83,7 +82,6 @@
         color: #ffffff;
         background: transparent;
         border: none;
-        border-radius: 12px;
         font-weight: 200;
         text-align: center;
         box-sizing: border-box;
@@ -105,9 +103,18 @@
         justify-content: center;
         background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
         border-radius: 12px;
+        justify-content: stretch;
     }
-
-
+    .actions form {
+      display: flex;
+      width: 100%;
+      gap: 0.6rem;
+    }
+    .actions form > * {
+      flex: 1;
+      text-align: center;
+      min-width: 0; 
+    }
     table { width: 100%; border-collapse: collapse; }
     th, td { border: 1px solid #aebed2; padding: 0.3rem; text-align: center; font-size: 0.85rem; }
     th { background: rgb(206, 212, 218); text-align: center; color: #003b71; font-size: 1rem; }
@@ -149,8 +156,8 @@
     </div>
   
     <div class="actions">
-      <form method="get" style="display:inline-block;">
-        <a href="{% url 'clientes_agregar' %}" class="btn">Agregar Nuevo Cliente</a>
+      <form method="get">
+        <a href="{% url 'clientes_agregar' %}" class="btn" style="border-radius: 12px 0 0 12px;">Agregar Nuevo Cliente</a>
         <select name="cliente">
           <option value="">-- Todos los clientes --</option>
           {% for c in clientes %}
@@ -159,7 +166,7 @@
             </option>
           {% endfor %}
         </select>
-        <button type="submit" class="btn">Filtrar</button>
+        <button type="submit" class="btn" style="border-radius: 0 12px 12px 0";>Filtrar</button>
       </form>
     </div>
 

@@ -33,7 +33,7 @@ def lista_dispersiones(request):
     anios = [y.year for y in anios]
 
     # Filtro principal
-    dispersiones = Dispersion.objects.all().order_by('-fecha')
+    dispersiones = Dispersion.objects.all().order_by('fecha')
     dispersiones = dispersiones.filter(fecha__month=mes, fecha__year=anio)
 
     # Lista de clientes y filtrado
