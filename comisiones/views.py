@@ -42,6 +42,9 @@ def listar_comisiones(request):
 
     comisionistas = qs.values('comisionista').annotate(total=Sum('monto')).order_by('comisionista')
 
+    # Calcular el total general de todas las comisiones del query filtrado
+    total_comisiones = qs.aggregate(total=Sum('monto'))['total'] or 0
+
     # Todos los comisionistas para el dropdown
     comisionistas_todos = Comision.objects.values('comisionista').distinct().order_by('comisionista')
 
@@ -52,6 +55,7 @@ def listar_comisiones(request):
         'anios': anios,
         'comisionistas_todos': comisionistas_todos,  # <- para el dropdown
         'comisionista_filtro': comisionista_filtro,  # <- para mantener seleccionado
+        'total_comisiones': total_comisiones,        # <- nuevo valor agregado
     })
 
 
@@ -115,6 +119,10 @@ def registrar_pago(request, comisionista, pago_id=None):
     anio = int(query.get('anio', [0])[0])
 
     if request.method == 'POST':
+        # 🔹 Si presionan "Cancelar", simplemente redirigimos
+        if 'cancel' in request.POST:
+            return redirect(next_url)
+
         form = PagoForm(request.POST, instance=pago)
         if form.is_valid():
             pago_guardado = form.save(commit=False)

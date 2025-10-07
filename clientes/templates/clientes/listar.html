@@ -127,7 +127,7 @@
     .pendiente-box h2 { 
       margin: 0; 
       font-size: 1rem; 
-      font-weight: 500; 
+      font-weight: 900; 
     }
 
     .pendiente-box .monto { 
@@ -144,7 +144,8 @@
     <h1>Clientes Activos</h1>
 
     <div class="pendiente-box">
-      Total <strong class="monto">{{ clientes|length }}</strong>
+      <h2>Total </h2>
+      <strong class="monto">{{ clientes|length }}</strong>
     </div>
   
     <div class="actions">
