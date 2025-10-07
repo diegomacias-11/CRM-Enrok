@@ -104,6 +104,7 @@
         justify-content: center;
         background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
         border-radius: 12px;
+        justify-content: stretch;
     }
     .actions form {
       display: flex;
@@ -119,22 +120,24 @@
     th, td { border: 1px solid #aebed2; padding: 0.3rem; text-align: center; font-size: 0.85rem; }
     th { background: rgb(206, 212, 218); text-align: center; color: #003b71; font-size: 1rem; }
 
-  .pendiente-box {
+    .pendiente-box {
         position: relative;
         background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
         color: white; 
-        padding: 0.3rem; 
+        padding: 0.5rem 1rem; 
         border-radius: 12px; 
         text-align: center; 
         display: flex;
-        flex-direction: column;
+        flex-direction: row; /* Mostrar totales en fila */
         justify-content: center;
         align-items: center;
-      }
+        gap: 10rem; /* Espacio entre totales */
+        flex-wrap: wrap; /* En caso de pantalla pequeña, se colocan uno debajo del otro */
+    }
       .pendiente-box h2 { 
         margin: 0; 
         font-size: 1rem; 
-        font-weight: 900; 
+        font-weight: 900;
       }
 
       .pendiente-box .monto { 
@@ -150,8 +153,15 @@
     <h1>Comisiones</h1>
 
     <div class="pendiente-box">
-      <h2>Total</h2> 
-      <strong class="monto">${{ total_comisiones|floatformat:2|intcomma }}</strong>
+      <div class="total-item">
+        <h2>Total Comisiones</h2>
+        <strong class="monto">${{ total_comisiones|floatformat:2|intcomma }}</strong>
+      </div>
+
+      <div class="total-item">
+        <h2>Total Liberado</h2>
+        <strong class="monto">${{ total_liberado|floatformat:2|intcomma }}</strong>
+      </div>
     </div>
 
     <div class="actions">

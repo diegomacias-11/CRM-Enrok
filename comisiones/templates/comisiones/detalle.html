@@ -79,14 +79,18 @@
         background: linear-gradient(135deg, #002952 0%, #244a7a 100%);
     }
     .actions {
-        margin-top: .5rem;
-        margin-bottom: .5rem; 
-        display: flex;
-        gap: .6rem;
-        justify-content: center;
-        background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
-        border-radius: 12px;
-    }
+            margin-top: .5rem;
+            margin-bottom: .5rem; 
+            display: flex;
+            gap: .6rem;
+            justify-content: center;
+            background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
+            border-radius: 12px;
+        }
+      .actions > a {
+          flex: 1;        
+          text-align: center;
+      }
   .pendiente-box {
         position: relative;
         background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
@@ -125,12 +129,11 @@
       <h2>Pendiente por Pagar</h2>
       <p class="monto">${{ pendiente_pagar|floatformat:2|intcomma }}</p>
     </div>
-    
     <div class="actions">
-      <a href="{{ volver_url }}" class="btn">Volver a Comisionistas</a>
-      <a href="{% url 'registrar_pago' comisionista %}?next={{ next|urlencode }}&mes={{ mes }}&anio={{ anio }}" class="btn">Registrar Pago</a>
+      <a href="{{ volver_url }}" class="btn" style="border-radius: 12px 0 0 12px">Volver a Comisionistas</a>
+      <a href="{% url 'registrar_pago' comisionista %}?next={{ next|urlencode }}&mes={{ mes }}&anio={{ anio }}" class="btn" style="border-radius: 0 12px 12px 0">Registrar Pago</a>
     </div>
-
+    
     <div style="display:flex; gap: 20px;">
       <!-- Tabla de comisiones -->
       <div style="flex:1;">

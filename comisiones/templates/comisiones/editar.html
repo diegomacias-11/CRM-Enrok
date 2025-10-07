@@ -108,9 +108,9 @@
       {{ form.as_p }}
       <div class="actions">
         <button type="submit" name="save" class="btn">Guardar</button>
-        <button type="submit" name="cancel" class="btn">Cancelar</button>
+        <button type="submit" name="cancel" class="btn" formnovalidate>Cancelar</button>
       </div>
-        <button type="submit" class="btn_eliminar" onclick="return confirm('¿Estás seguro de eliminar esta dispersión?')">Eliminar</button>
+        <button type="submit" name="delete" class="btn_eliminar" formnovalidate onclick="return confirm('¿Estás seguro de eliminar esta dispersión?')">Eliminar</button>
     </form>
   </div>
 </body>
