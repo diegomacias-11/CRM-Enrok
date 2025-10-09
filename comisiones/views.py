@@ -208,21 +208,6 @@ def editar_pago(request, comisionista, pago_id):
         'next_url': next_url,
     })
 
-def actualizar_estatus_cliente_global(cliente, mes, anio):
-    """
-    Marca como 'Liberado' todas las comisiones de un cliente
-    en el mismo mes y año si todas están en 'Pagado'.
-    """
-    comisiones_mes = Comision.objects.filter(
-        cliente=cliente,
-        dispersion__fecha__month=mes,
-        dispersion__fecha__year=anio
-    )
-
-    if comisiones_mes.exists() and all(c.estatus == "Pagado" for c in comisiones_mes):
-        comisiones_mes.update(estatus="Liberado")
-
-
 def actualizar_estatus_dispersion(request):
     if request.method == "POST":
         try:
