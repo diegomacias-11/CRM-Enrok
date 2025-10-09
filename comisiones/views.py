@@ -30,13 +30,9 @@ def listar_comisiones(request):
     except (TypeError, ValueError):
         anio = now.year
 
-    # Mostrar comisiones del mes anterior
-    if mes == 1:
-        mes_consulta = 12
-        anio_consulta = anio - 1
-    else:
-        mes_consulta = mes - 1
-        anio_consulta = anio
+    # Mostrar comisiones del mismo mes seleccionado
+    mes_consulta = mes
+    anio_consulta = anio
 
     # Fechas disponibles
     anios = Comision.objects.dates('dispersion__fecha', 'year')
@@ -84,19 +80,12 @@ def detalle_comisiones(request, comisionista):
     mes = int(query.get('mes', [datetime.now().month])[0])
     anio = int(query.get('anio', [datetime.now().year])[0])
 
-    # ✅ Mostrar comisiones del mes anterior
-    if mes == 1:
-        mes_consulta = 12
-        anio_consulta = anio - 1
-    else:
-        mes_consulta = mes - 1
-        anio_consulta = anio
-
+    # Mostrar comisiones del mismo mes seleccionado
     detalle = Comision.objects.filter(
         comisionista=comisionista,
-        dispersion__fecha__month=mes_consulta,
-        dispersion__fecha__year=anio_consulta
-    ).order_by('dispersion__fecha')
+        dispersion__fecha__month=mes,
+        dispersion__fecha__year=anio
+    )
 
     abonos = Pago.objects.filter(
         comisionista=comisionista,
