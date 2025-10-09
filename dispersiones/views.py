@@ -27,11 +27,11 @@ def lista_dispersiones(request):
     now = datetime.now()
     cliente_id = request.GET.get('cliente')
 
-    # Si no vienen parámetros o vienen vacíos, redirigimos con mes/año actuales
+    # 🔹 Si no vienen parámetros, redirigimos con mes/año actuales
     if not mes or not anio:
-        return redirect(f"{request.path}?mes={now.month}&anio={now.year}")
+        return redirect(f"{request.path}?mes={now.month}&anio={now.year}&cliente={cliente_id or ''}")
 
-    # Normalizamos
+    # 🔹 Normalizamos los parámetros
     try:
         mes = int(mes)
         if mes < 1 or mes > 12:
@@ -45,30 +45,36 @@ def lista_dispersiones(request):
         anio = now.year
 
     mes_nombre = MESES_ES.get(mes, "")
-    # Lista de años disponibles para filtro
+
+    # 🔹 Lista de años disponibles para el filtro
     anios = Dispersion.objects.dates('fecha', 'year')
     anios = [y.year for y in anios]
+    if not anios:
+        anios = [anio]  # 👈 Garantiza que siempre haya al menos un año visible
 
-    # Filtro principal
-    dispersiones = Dispersion.objects.all().order_by('fecha')
-    dispersiones = dispersiones.filter(fecha__month=mes, fecha__year=anio)
+    # 🔹 Query principal
+    dispersiones = Dispersion.objects.filter(
+        fecha__month=mes,
+        fecha__year=anio
+    ).order_by('fecha')
 
-    # Lista de clientes y filtrado
+    # 🔹 Filtro de cliente
     clientes = Cliente.objects.all()
     if cliente_id:
         dispersiones = dispersiones.filter(cliente_id=cliente_id)
 
-    #Suma de dispersiones 
+    # 🔹 Suma total del monto
     total_montos = dispersiones.aggregate(total=Sum('monto'))['total'] or 0
 
+    # 🔹 Render final
     return render(request, 'dispersiones/listar.html', {
         'dispersiones': dispersiones,
-        'mes': str(mes),
+        'mes': str(mes),             # Mantener como string para comparación en el template
         'mes_nombre': mes_nombre,
         'anio': str(anio),
-        'clientes': clientes,       # lista completa para el dropdown
-        'cliente': cliente_id,      # cliente seleccionado
-        'anios': anios,
+        'clientes': clientes,        # lista completa para el dropdown
+        'cliente': cliente_id,       # cliente seleccionado
+        'anios': anios,              # años disponibles
         'total_montos': total_montos,
     })
 

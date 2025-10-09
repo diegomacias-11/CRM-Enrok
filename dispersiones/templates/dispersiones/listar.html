@@ -162,7 +162,7 @@
   </div>
 
   <div class="actions">
-    <form method="get" class="filtro">
+    <form method="get" action="{% url 'dispersiones_listar' %}" class="filtro">
       <a href="{% url 'dispersiones_agregar' %}?mes={{ mes }}&anio={{ anio }}" class="btn_filtros" style="border-radius: 12px 0 0 12px;">Agregar Nueva Dispersión</a>
 
       <select name="cliente">

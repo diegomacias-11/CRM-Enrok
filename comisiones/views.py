@@ -3,8 +3,7 @@ from django.db.models import Sum
 from .models import Comision, Pago, Dispersion
 from datetime import datetime
 from .forms import PagoForm
-from urllib.parse import urlparse, parse_qs
-from django.views.decorators.csrf import csrf_exempt
+from urllib.parse import urlparse, parse_qs, unquote
 from datetime import date
 
 MESES_ES = {
@@ -45,34 +44,44 @@ def listar_comisiones(request):
     except (TypeError, ValueError):
         anio = now.year
 
-    # Mostrar comisiones del mismo mes seleccionado
-    mes_consulta = mes
     mes_nombre = MESES_ES.get(mes, "")
-    anio_consulta = anio
 
-    # Fechas disponibles
+    # 🔹 Lista de años disponibles
     anios = Comision.objects.dates('dispersion__fecha', 'year')
     anios = [y.year for y in anios]
+    if not anios:
+        anios = [anio]
 
-    # Query principal
+    # 🔹 Query principal de comisiones
     qs = Comision.objects.filter(
-        dispersion__fecha__month=mes_consulta,
-        dispersion__fecha__year=anio_consulta
+        dispersion__fecha__month=mes,
+        dispersion__fecha__year=anio
     )
 
     if comisionista_filtro:
         qs = qs.filter(comisionista=comisionista_filtro)
 
     comisionistas = qs.values('comisionista').annotate(total=Sum('monto')).order_by('comisionista')
+
     total_comisiones = qs.aggregate(total=Sum('monto'))['total'] or 0
-    comisionistas_todos = Comision.objects.values('comisionista').distinct().order_by('comisionista')
-    # Total de comisiones liberadas
     total_liberado = qs.filter(estatus='Liberado').aggregate(total=Sum('monto'))['total'] or 0
 
-    # Restar todos los pagos registrados de cualquier comisionista para ese mes y año
-    abonos = Pago.objects.filter(mes=mes, anio=anio).aggregate(total=Sum('monto'))['total'] or 0
-    total_comisiones -= abonos
-    total_liberado -= abonos
+    # 🔹 🔥 Restar solo los pagos correspondientes al periodo de la URL (no a la fecha real)
+    abonos = Pago.objects.filter(
+        mes=mes,  # periodo contable del pago
+        anio=anio
+    )
+
+    if comisionista_filtro:
+        abonos = abonos.filter(comisionista=comisionista_filtro)
+
+    total_abonos = abonos.aggregate(total=Sum('monto'))['total'] or 0
+
+    total_comisiones -= total_abonos
+    total_liberado -= total_abonos
+
+    # 🔹 Comisionistas totales
+    comisionistas_todos = Comision.objects.values('comisionista').distinct().order_by('comisionista')
 
     return render(request, 'comisiones/listar.html', {
         'comisionistas': comisionistas,
@@ -85,7 +94,6 @@ def listar_comisiones(request):
         'total_comisiones': total_comisiones,
         'total_liberado': total_liberado,
     })
-
 
 def detalle_comisiones(request, comisionista):
     from urllib.parse import urlparse, parse_qs
@@ -131,21 +139,28 @@ def detalle_comisiones(request, comisionista):
 def registrar_pago(request, comisionista, pago_id=None):
     # URL de retorno
     next_url = request.GET.get('next', f'/comisiones/detalle/{comisionista}/')
+    volver_url = request.GET.get('volver', None)
 
-    # Obtener el pago si es editar
-    if pago_id:
-        pago = get_object_or_404(Pago, pk=pago_id, comisionista=comisionista)
-    else:
-        pago = None
-
-    # Extraer mes y año de la URL next para asignar al pago
+    # Extraer mes y año del contexto (desde la URL principal o el volver codificado)
     parsed = urlparse(next_url)
     query = parse_qs(parsed.query)
     mes = int(query.get('mes', [0])[0])
     anio = int(query.get('anio', [0])[0])
 
+    # Si no los encuentra, intenta obtenerlos desde 'volver'
+    if not mes or not anio:
+        volver_url = query.get('volver', [None])[0]
+        if volver_url:
+            volver_decodificado = unquote(volver_url)
+            parsed_volver = urlparse(volver_decodificado)
+            query_volver = parse_qs(parsed_volver.query)
+            mes = int(query_volver.get('mes', [0])[0])
+            anio = int(query_volver.get('anio', [0])[0])
+
+    # Obtener el pago si es edición
+    pago = get_object_or_404(Pago, pk=pago_id, comisionista=comisionista) if pago_id else None
+
     if request.method == 'POST':
-        # 🔹 Si presionan "Cancelar", simplemente redirigimos
         if 'cancel' in request.POST:
             return redirect(next_url)
 
@@ -154,15 +169,16 @@ def registrar_pago(request, comisionista, pago_id=None):
             pago_guardado = form.save(commit=False)
             pago_guardado.comisionista = comisionista
 
-            # Si mes y año vienen de la URL next, los usamos
+            # 🔹 Asignar periodo contable (mes/año del filtro)
             if mes and anio:
                 pago_guardado.mes = mes
                 pago_guardado.anio = anio
             else:
-                # Si no, los extraemos de la fecha del pago
+                # fallback si no hay parámetros
                 pago_guardado.mes = pago_guardado.fecha_pago.month
                 pago_guardado.anio = pago_guardado.fecha_pago.year
 
+            # 🔹 Guardar (esto actualizará mes_real/anio_real automáticamente)
             pago_guardado.save()
             return redirect(next_url)
     else:
@@ -187,6 +203,16 @@ def editar_pago(request, comisionista, pago_id):
     mes = int(query.get('mes', [0])[0])
     anio = int(query.get('anio', [0])[0])
 
+    # Intentar obtener también del volver si no están directos
+    if not mes or not anio:
+        volver_url = query.get('volver', [None])[0]
+        if volver_url:
+            volver_decodificado = unquote(volver_url)
+            parsed_volver = urlparse(volver_decodificado)
+            query_volver = parse_qs(parsed_volver.query)
+            mes = int(query_volver.get('mes', [0])[0])
+            anio = int(query_volver.get('anio', [0])[0])
+
     if request.method == 'POST':
         if 'delete' in request.POST:
             pago.delete()
@@ -194,7 +220,6 @@ def editar_pago(request, comisionista, pago_id):
         elif 'cancel' in request.POST:
             return redirect(next_url)
         else:
-            # Guardar cambios
             form = PagoForm(request.POST, instance=pago)
             if form.is_valid():
                 pago_guardado = form.save(commit=False)

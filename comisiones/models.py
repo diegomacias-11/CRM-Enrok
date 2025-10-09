@@ -27,12 +27,21 @@ class Comision(models.Model):
 
 class Pago(models.Model):
     comisionista = models.CharField(max_length=255)
-    mes = models.IntegerField()
-    anio = models.IntegerField()
+    mes = models.IntegerField()  # Mes del periodo contable (comisión)
+    anio = models.IntegerField()  # Año del periodo contable (comisión)
     monto = models.DecimalField(max_digits=12, decimal_places=2)
-    fecha_pago = models.DateField()
+    fecha_pago = models.DateField()  # Fecha real del pago
+    mes_real = models.IntegerField(blank=True, null=True)  # 👈 Mes real del pago
+    anio_real = models.IntegerField(blank=True, null=True)  # 👈 Año real del pago
     creado = models.DateTimeField(auto_now_add=True)
     comentarios = models.TextField(blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        # Guardamos automáticamente mes_real y anio_real a partir de la fecha de pago
+        if self.fecha_pago:
+            self.mes_real = self.fecha_pago.month
+            self.anio_real = self.fecha_pago.year
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.comisionista} - {self.monto} ({self.fecha_pago})"
+        return f"{self.comisionista} - ${self.monto} ({self.mes}/{self.anio})"
