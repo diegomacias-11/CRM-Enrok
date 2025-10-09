@@ -5,10 +5,17 @@ class ClienteForm(forms.ModelForm):
     servicio = forms.ChoiceField(choices=[
         ('PROCOM', 'PROCOM'),
     ])
+    factura = forms.ChoiceField(choices=[
+        ('CONFEDIN', 'CONFEDIN'),
+        ('ZAMORA', 'ZAMORA'),
+        ('SERVIARUGA', 'SERVIARUGA'),
+        ('CAMARENCE', 'CAMARENCE'),
+        ('HATRES', 'HATRES'),
+    ])
     class Meta:
         model = Cliente
         fields = [
-            'servicio', 'comision_procom', 'nombre', 'utilidad_enrok',
+            'servicio', 'comision_procom', 'factura', 'nombre', 'utilidad_enrok',
             'comisionista_1', 'porcentaje_1',
             'comisionista_2', 'porcentaje_2',
             'comisionista_3', 'porcentaje_3',

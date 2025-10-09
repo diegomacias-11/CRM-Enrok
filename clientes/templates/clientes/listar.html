@@ -177,6 +177,7 @@
           <th>Nombre</th>
           <th>Servicio</th>
           <th>Comisión PROCOM</th>
+          <th>Factura</th>
           <th>Fecha Registro</th>
           <th>Acciones</th>
         </tr>
@@ -185,6 +186,7 @@
           <td>{{ cliente.nombre }}</td>
           <td>{{ cliente.servicio }}</td>
           <td>{{ cliente.comision_procom }}%</td>
+          <td>{{ cliente.factura }}</td>
           <td>{{ cliente.fecha_registro|date:"d/m/Y H:i" }}</td>
           <td>
             <a href="{% url 'clientes_editar' cliente.id %}" class="editar">Editar</a>

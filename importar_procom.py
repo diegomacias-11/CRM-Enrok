@@ -28,6 +28,7 @@ with open(ruta_csv, newline='', encoding='utf-8-sig') as csvfile:
             servicio=fila.get('servicio'),
             comision_procom=porcentaje_a_entero(fila.get('comision_procom')),
             nombre=fila.get('nombre'),
+            factura=fila.get('factura'),
             utilidad_enrok=porcentaje_a_entero(fila.get('utilidad_enrok')),
             comisionista_1=fila.get('comisionista_1'),
             porcentaje_1=porcentaje_a_entero(fila.get('porcentaje_1')),

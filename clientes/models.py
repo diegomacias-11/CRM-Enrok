@@ -3,6 +3,7 @@ from django.db import models
 class Cliente(models.Model):
     servicio = models.CharField(max_length=100)
     comision_procom = models.FloatField(blank=True, null=True)
+    factura = models.CharField(blank=True, null=True)
     nombre = models.CharField(max_length=150)
     utilidad_enrok = models.FloatField(blank=True, null=True)
     # Campos para comisionistas y sus porcentajes

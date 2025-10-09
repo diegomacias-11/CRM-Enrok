@@ -82,11 +82,13 @@ def agregar_dispersion(request):
     if request.method == 'POST':
         form = DispersionForm(request.POST, mes=mes, anio=anio)
         if form.is_valid():
-            form.save()
+            dispersion = form.save(commit=False)
+            dispersion.factura = dispersion.cliente.factura  # ✅ traer factura del cliente
+            dispersion.save()
             return redirect(request.POST.get('next', '/dispersiones/listar/'))
     else:
         form = DispersionForm(mes=mes, anio=anio)
-    
+
     return render(request, 'dispersiones/agregar.html', {
         'form': form,
         'titulo': 'Agregar Nueva Dispersión',
