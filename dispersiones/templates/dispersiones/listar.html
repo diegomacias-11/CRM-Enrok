@@ -155,7 +155,7 @@
 </head>
 <body>
 <div class="card">
-  <h1>Dispersiones</h1>
+  <h1>Dispersiones {{ mes_nombre }}</h1>
   <div class="pendiente-box">
     <h2>Total</h2>
     <div class="monto">${{ total_montos|floatformat:2|intcomma }}</div>
@@ -163,7 +163,7 @@
 
   <div class="actions">
     <form method="get" class="filtro">
-      <a href="{% url 'dispersiones_agregar' %}" class="btn_filtros" style="border-radius: 12px 0 0 12px;">Agregar Nueva Dispersión</a>
+      <a href="{% url 'dispersiones_agregar' %}?mes={{ mes }}&anio={{ anio }}" class="btn_filtros" style="border-radius: 12px 0 0 12px;">Agregar Nueva Dispersión</a>
 
       <select name="cliente">
         <option value="">-- Todos los clientes --</option>

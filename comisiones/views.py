@@ -7,6 +7,21 @@ from urllib.parse import urlparse, parse_qs
 from django.views.decorators.csrf import csrf_exempt
 from datetime import date
 
+MESES_ES = {
+    1: "Enero",
+    2: "Febrero",
+    3: "Marzo",
+    4: "Abril",
+    5: "Mayo",
+    6: "Junio",
+    7: "Julio",
+    8: "Agosto",
+    9: "Septiembre",
+    10: "Octubre",
+    11: "Noviembre",
+    12: "Diciembre",
+}
+
 def listar_comisiones(request):
     liberar_comisiones_mes_anterior()
 
@@ -32,6 +47,7 @@ def listar_comisiones(request):
 
     # Mostrar comisiones del mismo mes seleccionado
     mes_consulta = mes
+    mes_nombre = MESES_ES.get(mes, "")
     anio_consulta = anio
 
     # Fechas disponibles
@@ -61,6 +77,7 @@ def listar_comisiones(request):
     return render(request, 'comisiones/listar.html', {
         'comisionistas': comisionistas,
         'mes': str(mes),
+        'mes_nombre': mes_nombre,
         'anio': str(anio),
         'anios': anios,
         'comisionistas_todos': comisionistas_todos,
@@ -72,12 +89,12 @@ def listar_comisiones(request):
 
 def detalle_comisiones(request, comisionista):
     from urllib.parse import urlparse, parse_qs
-
     volver_url = request.GET.get('volver', '/comisiones/listar/')
 
     parsed = urlparse(volver_url)
     query = parse_qs(parsed.query)
     mes = int(query.get('mes', [datetime.now().month])[0])
+    mes_nombre = MESES_ES.get(mes, "")
     anio = int(query.get('anio', [datetime.now().year])[0])
 
     # Mostrar comisiones del mismo mes seleccionado
@@ -104,6 +121,7 @@ def detalle_comisiones(request, comisionista):
         'next': request.get_full_path(),
         'volver_url': volver_url,
         'mes': mes,
+        'mes_nombre': mes_nombre,
         'anio': anio,
         'pendiente_pagar': pendiente_pagar,
     }

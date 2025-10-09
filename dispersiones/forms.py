@@ -16,7 +16,7 @@ class DispersionForm(forms.ModelForm):
         ('Cerrado', 'Cerrado'),
         ('Timbrado', 'Timbrado'),        
         ('Enviado', 'Enviado'), 
-        ('Enviado ind.', 'Enviado ind'), 
+        ('Enviado ind.', 'Enviado ind.'), 
         ('Drive', 'Drive'), 
     ])
 
@@ -36,8 +36,19 @@ class DispersionForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        # Recibir mes y anio desde la vista
+        self.mes = kwargs.pop('mes', None)
+        self.anio = kwargs.pop('anio', None)
         super().__init__(*args, **kwargs)
-        # Si es edición de un registro existente, monto no editable
+
+        # Si es edición de un registro existente, monto y cliente no editables
         if self.instance and self.instance.pk:
             self.fields['monto'].disabled = True
             self.fields['cliente'].disabled = True
+
+    def clean_fecha(self):
+        fecha = self.cleaned_data.get('fecha')
+        if fecha and self.mes and self.anio:
+            if fecha.month != self.mes or fecha.year != self.anio:
+                raise forms.ValidationError(f"La fecha debe pertenecer al mes {self.mes:02d}/{self.anio}.")
+        return fecha

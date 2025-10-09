@@ -4,6 +4,22 @@ from .forms import DispersionForm
 from datetime import datetime
 from clientes.models import Cliente
 from django.db.models import Sum
+from datetime import datetime
+
+MESES_ES = {
+    1: "Enero",
+    2: "Febrero",
+    3: "Marzo",
+    4: "Abril",
+    5: "Mayo",
+    6: "Junio",
+    7: "Julio",
+    8: "Agosto",
+    9: "Septiembre",
+    10: "Octubre",
+    11: "Noviembre",
+    12: "Diciembre",
+}
 
 def lista_dispersiones(request):
     mes = request.GET.get('mes')
@@ -28,6 +44,7 @@ def lista_dispersiones(request):
     except (TypeError, ValueError):
         anio = now.year
 
+    mes_nombre = MESES_ES.get(mes, "")
     # Lista de años disponibles para filtro
     anios = Dispersion.objects.dates('fecha', 'year')
     anios = [y.year for y in anios]
@@ -47,6 +64,7 @@ def lista_dispersiones(request):
     return render(request, 'dispersiones/listar.html', {
         'dispersiones': dispersiones,
         'mes': str(mes),
+        'mes_nombre': mes_nombre,
         'anio': str(anio),
         'clientes': clientes,       # lista completa para el dropdown
         'cliente': cliente_id,      # cliente seleccionado
@@ -55,20 +73,24 @@ def lista_dispersiones(request):
     })
 
 def agregar_dispersion(request):
-    next_url = request.GET.get('next', request.META.get('HTTP_REFERER', '/dispersiones/listar/'))
+    mes = request.GET.get('mes')
+    anio = request.GET.get('anio')
+    next_url = f'/dispersiones/listar/?mes={mes}&anio={anio}'
+    mes = int(request.GET.get('mes', datetime.now().month))
+    anio = int(request.GET.get('anio', datetime.now().year))
 
     if request.method == 'POST':
-        form = DispersionForm(request.POST)
+        form = DispersionForm(request.POST, mes=mes, anio=anio)
         if form.is_valid():
             form.save()
             return redirect(request.POST.get('next', '/dispersiones/listar/'))
     else:
-        form = DispersionForm()
+        form = DispersionForm(mes=mes, anio=anio)
     
     return render(request, 'dispersiones/agregar.html', {
         'form': form,
         'titulo': 'Agregar Nueva Dispersión',
-        'next_url': next_url
+        'next_url': next_url,
     })
 
 
