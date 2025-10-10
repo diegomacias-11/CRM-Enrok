@@ -66,7 +66,7 @@ def listar_comisiones(request):
     total_comisiones = qs.aggregate(total=Sum('monto'))['total'] or 0
     total_liberado = qs.filter(estatus='Liberado').aggregate(total=Sum('monto'))['total'] or 0
 
-    # 🔹 🔥 Restar solo los pagos correspondientes al periodo de la URL (no a la fecha real)
+    # Restar solo los pagos correspondientes al periodo de la URL (no a la fecha real)
     abonos = Pago.objects.filter(
         mes=mes,  # periodo contable del pago
         anio=anio

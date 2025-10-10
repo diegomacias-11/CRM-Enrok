@@ -52,21 +52,21 @@ def lista_dispersiones(request):
     if not anios:
         anios = [anio]  # 👈 Garantiza que siempre haya al menos un año visible
 
-    # 🔹 Query principal
+    # Query principal
     dispersiones = Dispersion.objects.filter(
         fecha__month=mes,
         fecha__year=anio
     ).order_by('fecha')
 
-    # 🔹 Filtro de cliente
+    # Filtro de cliente
     clientes = Cliente.objects.all()
     if cliente_id:
         dispersiones = dispersiones.filter(cliente_id=cliente_id)
 
-    # 🔹 Suma total del monto
+    # Suma total del monto
     total_montos = dispersiones.aggregate(total=Sum('monto'))['total'] or 0
 
-    # 🔹 Render final
+    # Render final
     return render(request, 'dispersiones/listar.html', {
         'dispersiones': dispersiones,
         'mes': str(mes),             # Mantener como string para comparación en el template
@@ -89,7 +89,7 @@ def agregar_dispersion(request):
         form = DispersionForm(request.POST, mes=mes, anio=anio)
         if form.is_valid():
             dispersion = form.save(commit=False)
-            dispersion.factura = dispersion.cliente.factura  # ✅ traer factura del cliente
+            dispersion.factura = dispersion.cliente.factura  # traer factura del cliente
             dispersion.save()
             return redirect(request.POST.get('next', '/dispersiones/listar/'))
     else:
@@ -104,10 +104,14 @@ def agregar_dispersion(request):
 
 def editar_dispersion(request, pk):
     dispersion = get_object_or_404(Dispersion, pk=pk)
-    next_url = request.GET.get('next', request.META.get('HTTP_REFERER', '/dispersiones/listar/'))
+    mes = request.GET.get('mes')
+    anio = request.GET.get('anio')
+    next_url = f'/dispersiones/listar/?mes={mes}&anio={anio}'
+    mes = int(request.GET.get('mes', datetime.now().month))
+    anio = int(request.GET.get('anio', datetime.now().year))
 
     if request.method == 'POST':
-        form = DispersionForm(request.POST, instance=dispersion)
+        form = DispersionForm(request.POST, instance=dispersion, mes=mes, anio=anio)
         if form.is_valid():
             form.save()
             return redirect(request.POST.get('next', '/dispersiones/listar/'))
