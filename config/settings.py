@@ -31,7 +31,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+# settings.py 
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'enrok'
+LOGOUT_REDIRECT_URL = 'login'
 # Application definition
 
 INSTALLED_APPS = [
@@ -45,6 +48,7 @@ INSTALLED_APPS = [
     'dispersiones',
     'comisiones',
     'django.contrib.humanize',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -110,19 +114,15 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
 
 USE_I18N = True
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static'] 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

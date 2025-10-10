@@ -96,7 +96,7 @@
         background-color: #ffffff;
         text-align: center;
     }
-    button:hover,
+    button:hover,.atras:hover
     .btn_agregar:hover,
     .btn_filtros:hover,
     .editar:hover,
@@ -150,12 +150,53 @@
         margin: 0;
         color: #ffcf56;
       }
-
+    .user_box{
+      position: absolute;
+      justify-content: center;
+      width: auto;
+      top: 10px;         
+      right: 8rem;     
+      background: #ffcf56;
+      color: #0b1220;
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .45rem .9rem .45rem 80px;
+      border-radius: 0 12px 12px 0;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(0,0,0,.18);
+      z-index: 2;
+      -webkit-clip-path: polygon(60px 0, 100% 0, 100% 100%, 0 100%);
+      clip-path: polygon(60px 0, 100% 0, 100% 100%, 0 100%);
+    }
+.atras{
+      position: fixed;   /* ← lo hace fijo al viewport */
+      top: 4rem;         /* distancia desde arriba */
+      left: 10rem;        /* distancia desde la izquierda */
+      z-index: 1000; 
+      padding: 3px 20px;
+      text-decoration: none;
+      display: inline-block;
+      color: #ffcf56;
+      background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
+      border: none;
+      border-radius: 12px;
+      font-weight: 200;
+      text-align: center;
+      line-height: 30px;
+      font-size: .9rem;
+      box-sizing: border-box;
+      cursor: pointer;
+      transition: 0.3s;
+    }
   </style>
 </head>
 <body>
+  <div class="user_box">
+    <strong>{{ user.get_full_name|default:user.username }}</strong>
+    <small>{{ user.groups.all.0.name|default:"Sin grupo" }}</small>
+  </div>
 <div class="card">
   <h1>Dispersiones {{ mes_nombre }}</h1>
+  <a href="{% url 'enrok' %}" class="atras" >Atras</a>
   <div class="pendiente-box">
     <h2>Total</h2>
     <div class="monto">${{ total_montos|floatformat:2|intcomma }}</div>

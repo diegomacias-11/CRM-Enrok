@@ -16,10 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth.views import LoginView, LogoutView
+from core.forms import LoginForm
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('clientes/', include('clientes.urls')),  # Incluye las URLs de la app clientes
+    # Auth (usa tu template templates/auth/login.html)
+    path('accounts/login/',LoginView.as_view(template_name='auth/login.html', authentication_form=LoginForm),name='login'),
+    path('accounts/logout/', LogoutView.as_view(), name='logout'),
+    # Core (redirige post-login por rol)
+    path('', include('core.urls')),
+    # Tus apps
+    path('clientes/', include('clientes.urls')),       # Incluye las URLs de la app clientes
     path('dispersiones/', include('dispersiones.urls')),
     path('comisiones/', include('comisiones.urls')),
 ]
