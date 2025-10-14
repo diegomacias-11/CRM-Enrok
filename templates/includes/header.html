@@ -1,0 +1,25 @@
+{% load static %}
+<header class="navbar">
+  <div class="container">
+    <div class="logo-box">
+      <a href="{% url 'enrok' %}" class="logo-link">
+        <img src="{% static 'img/logo.png' %}" alt="Enrok" class="logo-img">
+      </a>
+      <h1 class="logo-text"></h1>
+    </div>
+
+    <nav class="nav-links">
+      <a href="{% url 'clientes_listar' %}">Clientes</a>
+      <a href="{% url 'comisiones_listar' %}">Comisiones</a>
+      <a href="{% url 'dispersiones_listar' %}">Dispersiones</a>
+      <a href="#">Reportes</a>
+    </nav>
+
+    <div class="user-box">
+      <div>
+        <strong>{{ user.get_full_name|default:user.username }}</strong>
+        <small>{{ user.groups.all.0.name|default:"Sin grupo" }}</small>
+      </div>
+    </div>
+  </div>
+</header>

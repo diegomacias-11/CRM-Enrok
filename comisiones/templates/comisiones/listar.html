@@ -1,205 +1,17 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'base_listar.html' %}
 {% load humanize %}
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lista de Comisiones</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-        --fuente-principal: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    }
-    *,
-    *::before,
-    *::after {
-        font-family: var(--fuente-principal) !important;
-    }
-    body { 
-    min-height: 100vh; 
-    display: grid; 
-    place-items: start center;
-    background: #0f172a; 
-    margin: 0;
-    padding-top: 2rem; 
-    }
-    .card {
-        width: 95vw;            
-        max-width: 1200px;      
-        margin: 1rem;           
-        min-height: 80vh;       
-        color: #0b1220; 
-        background: #ffffff;
-        padding: 2rem; 
-        border-radius: 12px;
-        box-shadow: 0 18px 40px rgba(0,0,0,.25);
-    }
-    h1 { text-align: center;
-      margin-bottom: 1rem;
-      margin-top: -1rem;
-    }
-    .btn {
-        padding: 2px 8px;
-        text-decoration: none;
-        display: inline-block;
-        color: #ffcf56;
-        background: transparent;
-        border: none;
-        font-weight: 200;
-        text-align: center;
-        line-height: 30px;
-        font-size: .9rem;
-        box-sizing: border-box;
-        cursor: pointer;
-        transition: 0.3s;
-    }
+{% block title %}Lista de Comisiones{% endblock %}
 
-    .detalle {
-      padding: 0px 5px;
-      text-decoration: none;
-      display: inline-block;
-      color: #ffffff;
-      background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
-      border: none;
-      border-radius: 12px;
-      font-weight: 200;
-      text-align: center;
-      line-height: 30px;
-      font-size: .9rem;
-      box-sizing: border-box;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    select {
-        padding: 7px 8px;
-        font-size: .9rem;
-        color: #ffffff;
-        background: transparent;
-        border: none;
-        font-weight: 200;
-        text-align: center;
-        box-sizing: border-box;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-
-    select option {
-        color: #00101f;
-        background-color: #ffffff;
-        text-align: center;
-    }
-
-    .detalle:hover,.atras:hover,
-    .btn:hover,
-    select:hover {
-        background: linear-gradient(135deg, #002952 0%, #244a7a 100%);
-    }
-
-    .actions {
-        margin-top: .5rem;
-        margin-bottom: .5rem; 
-        display: flex;
-        gap: .6rem;
-        justify-content: center;
-        background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
-        border-radius: 12px;
-        justify-content: stretch;
-    }
-    .actions form {
-      display: flex;
-      width: 100%;
-      gap: 0.6rem;
-    }
-    .actions form > * {
-      flex: 1;
-      text-align: center;
-      min-width: 0; 
-    }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #aebed2; padding: 0.3rem; text-align: center; font-size: 0.85rem; }
-    th { background: rgb(206, 212, 218); text-align: center; color: #003b71; font-size: 1rem; }
-
-    .pendiente-box {
-        position: relative;
-        background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
-        color: white; 
-        padding: 0.5rem 1rem; 
-        border-radius: 12px; 
-        text-align: center; 
-        display: flex;
-        flex-direction: row; /* Mostrar totales en fila */
-        justify-content: center;
-        align-items: center;
-        gap: 10rem; /* Espacio entre totales */
-        flex-wrap: wrap; /* En caso de pantalla pequeña, se colocan uno debajo del otro */
-    }
-      .pendiente-box h2 { 
-        margin: 0; 
-        font-size: 1rem; 
-        font-weight: 900;
-      }
-
-      .pendiente-box .monto { 
-        font-size: 1rem; 
-        font-weight: 600; 
-        margin: 0;
-        color: #ffcf56;
-      }
-    .user_box{
-      position: absolute;
-      justify-content: center;
-      width: auto;
-      top: 10px;         
-      right: 8rem;     
-      background: #ffcf56;
-      color: #0b1220;
-      display: inline-flex; align-items: center; gap: .5rem;
-      padding: .45rem .9rem .45rem 80px;
-      border-radius: 0 12px 12px 0;
-      font-weight: 700;
-      box-shadow: 0 8px 20px rgba(0,0,0,.18);
-      z-index: 2;
-      -webkit-clip-path: polygon(60px 0, 100% 0, 100% 100%, 0 100%);
-      clip-path: polygon(60px 0, 100% 0, 100% 100%, 0 100%);
-    }
-.atras{
-      position: fixed;   /* ← lo hace fijo al viewport */
-      top: 4rem;         /* distancia desde arriba */
-      left: 10rem;        /* distancia desde la izquierda */
-      z-index: 1000; 
-      padding: 3px 20px;
-      text-decoration: none;
-      display: inline-block;
-      color: #ffcf56;
-      background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
-      border: none;
-      border-radius: 12px;
-      font-weight: 200;
-      text-align: center;
-      line-height: 30px;
-      font-size: .9rem;
-      box-sizing: border-box;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-  </style>
-</head>
-<body>
-  <div class="user_box">
-    <strong>{{ user.get_full_name|default:user.username }}</strong>
-    <small>{{ user.groups.all.0.name|default:"Sin grupo" }}</small>
-  </div>
-  <div class="card">
+{% block title_filters %}
+  <div class="card-top">
     <h1>Comisiones {{ mes_nombre }}</h1>
-    <a href="{% url 'enrok' %}" class="atras" >Atras</a>
     <div class="pendiente-box">
-      <div class="total-item">
+      <div >
         <h2>Total Comisiones</h2>
         <strong class="monto">${{ total_comisiones|floatformat:2|intcomma }}</strong>
       </div>
 
-      <div class="total-item">
+      <div>
         <h2>Total Liberado</h2>
         <strong class="monto">${{ total_liberado|floatformat:2|intcomma }}</strong>
       </div>
@@ -208,40 +20,44 @@
     <div class="actions">
       <form method="get" class="filtro">
         <select name="comisionista" style="border-radius: 12px 0 0 12px;">
-            <option value="">-- Todos los comisionistas --</option>
-            {% for comp in comisionistas_todos %}
-              <option value="{{ comp.comisionista }}" {% if comp.comisionista == request.GET.comisionista %}selected{% endif %}>
-                {{ comp.comisionista }}
-              </option>
-            {% endfor %}
-        </select>    
+          <option value="">-- Todos los comisionistas --</option>
+          {% for comp in comisionistas_todos %}
+            <option value="{{ comp.comisionista }}" {% if comp.comisionista == request.GET.comisionista %}selected{% endif %}>
+              {{ comp.comisionista }}
+            </option>
+          {% endfor %}
+        </select>
+
         <select name="mes" required>
-            <option value="1" {% if mes == "1" %}selected{% endif %}>Enero</option>
-            <option value="2" {% if mes == "2" %}selected{% endif %}>Febrero</option>
-            <option value="3" {% if mes == "3" %}selected{% endif %}>Marzo</option>
-            <option value="4" {% if mes == "4" %}selected{% endif %}>Abril</option>
-            <option value="5" {% if mes == "5" %}selected{% endif %}>Mayo</option>
-            <option value="6" {% if mes == "6" %}selected{% endif %}>Junio</option>
-            <option value="7" {% if mes == "7" %}selected{% endif %}>Julio</option>
-            <option value="8" {% if mes == "8" %}selected{% endif %}>Agosto</option>
-            <option value="9" {% if mes == "9" %}selected{% endif %}>Septiembre</option>
-            <option value="10" {% if mes == "10" %}selected{% endif %}>Octubre</option>
-            <option value="11" {% if mes == "11" %}selected{% endif %}>Noviembre</option>
-            <option value="12" {% if mes == "12" %}selected{% endif %}>Diciembre</option>
+          <option value="1" {% if mes == "1" %}selected{% endif %}>Enero</option>
+          <option value="2" {% if mes == "2" %}selected{% endif %}>Febrero</option>
+          <option value="3" {% if mes == "3" %}selected{% endif %}>Marzo</option>
+          <option value="4" {% if mes == "4" %}selected{% endif %}>Abril</option>
+          <option value="5" {% if mes == "5" %}selected{% endif %}>Mayo</option>
+          <option value="6" {% if mes == "6" %}selected{% endif %}>Junio</option>
+          <option value="7" {% if mes == "7" %}selected{% endif %}>Julio</option>
+          <option value="8" {% if mes == "8" %}selected{% endif %}>Agosto</option>
+          <option value="9" {% if mes == "9" %}selected{% endif %}>Septiembre</option>
+          <option value="10" {% if mes == "10" %}selected{% endif %}>Octubre</option>
+          <option value="11" {% if mes == "11" %}selected{% endif %}>Noviembre</option>
+          <option value="12" {% if mes == "12" %}selected{% endif %}>Diciembre</option>
         </select>
 
         <select name="anio" required>
-            {% for year in anios %}
-              <option value="{{ year }}" {% if anio == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
-            {% endfor %}
+          {% for year in anios %}
+            <option value="{{ year }}" {% if anio == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+          {% endfor %}
         </select>
 
-        <button type="submit" class="btn" style="border-radius: 0 12px 12px 0">Filtrar</button>
+        <button type="submit" class="btn" style="border-radius: 0 12px 12px 0;">Filtrar</button>
       </form>
     </div>
+  </div>
+{% endblock %}
 
-    <!-- Mini-card para tabla de comisiones -->
-    <div style="border:1px solid #aebed2; border-radius:12px; overflow:hidden; margin-top:1rem;">
+{% block content %}
+  <div class="card">
+    <div class="table-container">
       <table>
         <tr>
           <th>Comisionista</th>
@@ -253,7 +69,7 @@
           <td>{{ c.comisionista }}</td>
           <td>${{ c.total|floatformat:2|intcomma }}</td>
           <td>
-            <a href="{% url 'comisiones_detalle' c.comisionista %}?volver={{ request.get_full_path|urlencode }}" class="detalle">Detalle</a>
+            <a href="{% url 'comisiones_detalle' c.comisionista %}?volver={{ request.get_full_path|urlencode }}" class="editar">Detalle</a>
           </td>
         </tr>
         {% empty %}
@@ -264,5 +80,4 @@
       </table>
     </div>
   </div>
-</body>
-</html>
+{% endblock %}

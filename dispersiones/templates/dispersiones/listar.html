@@ -1,217 +1,26 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'base_listar.html' %}
 {% load humanize %}
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lista de Dispersión</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root { --fuente-principal: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-    *, *::before, *::after { font-family: var(--fuente-principal) !important; }
+{% block title %}Lista de Dispersión{% endblock %}
 
-    body { 
-    min-height: 100vh; 
-    display: grid; 
-    place-items: start center;
-    background: #0f172a; 
-    margin: 0;
-    padding-top: 2rem; 
-    }
-    .card {
-        width: 95vw;            
-        max-width: 1200px;      
-        margin: 1rem;           
-        min-height: 80vh;       
-        color: #0b1220; 
-        background: #ffffff;
-        padding: 2rem; 
-        border-radius: 12px;
-        box-shadow: 0 18px 40px rgba(0,0,0,.25);
-    }
-    h1 { text-align: center;
-      margin-bottom: 1rem;
-      margin-top: -1rem;
-    }
-    .btn_filtros{
-        padding: 2px 8px;
-        text-decoration: none;
-        display: inline-block;
-        color: #ffcf56;
-        background: transparent;
-        border: none;
-        font-weight: 200;
-        text-align: center;
-        line-height: 30px;
-        font-size: .9rem;
-        box-sizing: border-box;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-    .editar{
-      padding: 0px 5px;
-      text-decoration: none;
-      display: inline-block;
-      color: #ffffff;
-      background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
-      border: none;
-      border-radius: 12px;
-      font-weight: 200;
-      text-align: center;
-      line-height: 30px;
-      font-size: .9rem;
-      box-sizing: border-box;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    select {
-        padding: 7px 8px;
-        font-size: .9rem;
-        color: #ffffff;
-        background: transparent;
-        border: none;
-        font-weight: 200;
-        text-align: center;
-        box-sizing: border-box;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-    .filtro_pagado{
-      padding: 4px 3px;      
-        font-size: .9rem;           
-        color: #ffffff;
-        background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
-        border: none;
-        border-radius: 12px;
-        font-weight: 200;
-        text-align: center;
-        box-sizing: border-box;
-        cursor: pointer;
-        transition: 0.3s;  
-    }
-    select option,
-    .filtros option,
-    .filtro_pagado option {
-        color: #00101f;
-        background-color: #ffffff;
-        text-align: center;
-    }
-    button:hover,.atras:hover
-    .btn_agregar:hover,
-    .btn_filtros:hover,
-    .editar:hover,
-    .filtro_pagado:hover,
-    select:hover {
-        background: linear-gradient(135deg, #002952 0%, #244a7a 100%);
-    }
-    .actions {
-        margin-top: .5rem;
-        margin-bottom: .5rem; 
-        display: flex;
-        gap: .6rem;
-        justify-content: center;
-        background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
-        border-radius: 12px;
-    }
-    .actions form {
-      display: flex;
-      width: 100%;
-      gap: 0.6rem;
-    }
-    .actions form > * {
-      flex: 1;
-      text-align: center;
-      min-width: 0; 
-    }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #aebed2; padding: 0.3rem; text-align: center; font-size: 0.85rem; }
-    th { background: rgb(206, 212, 218); text-align: center; color: #003b71; font-size: 1rem; }
-  .pendiente-box {
-        position: relative;
-        background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
-        color: white; 
-        padding: 0.3rem; 
-        border-radius: 12px; 
-        text-align: center; 
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
-      .pendiente-box h2 { 
-        margin: 0; 
-        font-size: 1rem; 
-        font-weight: 900; 
-      }
-
-      .pendiente-box .monto { 
-        font-size: 1rem; 
-        font-weight: 600; 
-        margin: 0;
-        color: #ffcf56;
-      }
-    .user_box{
-      position: absolute;
-      justify-content: center;
-      width: auto;
-      top: 10px;         
-      right: 8rem;     
-      background: #ffcf56;
-      color: #0b1220;
-      display: inline-flex; align-items: center; gap: .5rem;
-      padding: .45rem .9rem .45rem 80px;
-      border-radius: 0 12px 12px 0;
-      font-weight: 700;
-      box-shadow: 0 8px 20px rgba(0,0,0,.18);
-      z-index: 2;
-      -webkit-clip-path: polygon(60px 0, 100% 0, 100% 100%, 0 100%);
-      clip-path: polygon(60px 0, 100% 0, 100% 100%, 0 100%);
-    }
-.atras{
-      position: fixed;   /* ← lo hace fijo al viewport */
-      top: 4rem;         /* distancia desde arriba */
-      left: 10rem;        /* distancia desde la izquierda */
-      z-index: 1000; 
-      padding: 3px 20px;
-      text-decoration: none;
-      display: inline-block;
-      color: #ffcf56;
-      background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
-      border: none;
-      border-radius: 12px;
-      font-weight: 200;
-      text-align: center;
-      line-height: 30px;
-      font-size: .9rem;
-      box-sizing: border-box;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-  </style>
-</head>
-<body>
-  <div class="user_box">
-    <strong>{{ user.get_full_name|default:user.username }}</strong>
-    <small>{{ user.groups.all.0.name|default:"Sin grupo" }}</small>
-  </div>
-<div class="card">
+{% block title_filters %}
+<div class="card-top">
   <h1>Dispersiones {{ mes_nombre }}</h1>
-  <a href="{% url 'enrok' %}" class="atras" >Atras</a>
   <div class="pendiente-box">
     <h2>Total</h2>
-    <div class="monto">${{ total_montos|floatformat:2|intcomma }}</div>
+    <p class="monto">${{ total_montos|floatformat:2|intcomma }}</p>
   </div>
 
   <div class="actions">
     <form method="get" action="{% url 'dispersiones_listar' %}" class="filtro">
-      <a href="{% url 'dispersiones_agregar' %}?mes={{ mes }}&anio={{ anio }}" class="btn_filtros" style="border-radius: 12px 0 0 12px;">Agregar Nueva Dispersión</a>
+      <a href="{% url 'dispersiones_agregar' %}?mes={{ mes }}&anio={{ anio }}" class="btn"
+        style="border-radius: 12px 0 0 12px;">Agregar Nueva Dispersión</a>
 
       <select name="cliente">
         <option value="">-- Todos los clientes --</option>
         {% for c in clientes %}
-          <option value="{{ c.id }}" {% if cliente|stringformat:"s" == c.id|stringformat:"s" %}selected{% endif %}>
-            {{ c.nombre }}
-          </option>
+        <option value="{{ c.id }}" {% if cliente|stringformat:"s" == c.id|stringformat:"s" %}selected{% endif %}>
+          {{ c.nombre }}
+        </option>
         {% endfor %}
       </select>
 
@@ -233,16 +42,19 @@
       <select class="filtros" name="anio">
         <option value="">-- Año --</option>
         {% for year in anios %}
-          <option value="{{ year }}" {% if anio == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+        <option value="{{ year }}" {% if anio == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
         {% endfor %}
       </select>
 
-      <button type="submit" class="btn_filtros" style="border-radius: 0 12px 12px 0">Filtrar</button>
+      <button type="submit" class="btn" style="border-radius: 0 12px 12px 0">Filtrar</button>
     </form>
   </div>
+</div>
+{% endblock %}
 
-  <!-- Mini-card para tabla -->
-  <div style="border:1px solid #aebed2; border-radius:12px; overflow:hidden; margin-top:1rem;">
+{% block content %}
+<div class="card">
+  <div class="table-container">
     <table>
       <tr>
         <th>Fecha</th>
@@ -251,7 +63,7 @@
         <th>Num.</th>
         <th>Monto</th>
         <th>Comisión</th>
-        <th>Num. H</th>        
+        <th>Num. H</th>
         <th>Honorarios</th>
         <th>Estatus</th>
         <th>Comentarios</th>
@@ -259,22 +71,23 @@
         <th>Acciones</th>
         <th>Pago</th>
       </tr>
+
       {% for disp in dispersiones %}
       <tr>
         <td>{{ disp.fecha|date:"d/m/Y" }}</td>
         <td>{{ disp.cliente.nombre }}</td>
         <td>{{ disp.factura }}</td>
-        <td>{{disp.num_factura|default_if_none:""}}</td>
+        <td>{{ disp.num_factura|default_if_none:"" }}</td>
         <td>${{ disp.monto|floatformat:2|intcomma }}</td>
         <td>${{ disp.comision|floatformat:2|intcomma }}</td>
-        <td>{{disp.num_factura_honorarios|default_if_none:""}}</td>        
+        <td>{{ disp.num_factura_honorarios|default_if_none:"" }}</td>
         <td>${{ disp.total_honorarios|floatformat:2|intcomma }}</td>
         <td>{{ disp.estatus }}</td>
         <td>{{ disp.comentarios }}</td>
         <td>{{ disp.estatus_periodo }}</td>
-        <td>
-          <a href="{% url 'dispersiones_editar' disp.id %}" class="editar">Editar</a>
-        </td>
+
+        <td><a href="{% url 'dispersiones_editar' disp.id %}" class="editar">Editar</a></td>
+
         <td>
           <form method="post" action="{% url 'actualizar_estatus_dispersion' %}">
             {% csrf_token %}
@@ -288,11 +101,10 @@
       </tr>
       {% empty %}
       <tr>
-        <td colspan="12" style="text-align:center;">No hay dispersión registrada.</td>
+        <td colspan="13" style="text-align:center;">No hay dispersión registrada.</td>
       </tr>
       {% endfor %}
     </table>
   </div>
 </div>
-</body>
-</html>
+{% endblock %}
