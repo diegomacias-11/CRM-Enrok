@@ -1,0 +1,54 @@
+{% extends 'base_listar.html' %}
+{% load humanize %}
+{% block title %}Reporte de Dispersión{% endblock %}
+
+{% block title_filters %}
+  <div class="card-top">
+    <h1>Reporte General de Dispersión</h1>
+
+    <div class="pendiente-box">
+      <div>
+        <h2>Totales Globales</h2>
+        <strong class="monto">
+          Dispersado: ${{ total_dispersiones|floatformat:2|intcomma }} |
+          Facturado: ${{ total_facturado|floatformat:2|intcomma }} |
+          Pendiente: ${{ total_pendiente|floatformat:2|intcomma }}
+        </strong>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="table-container">
+      <table>
+        <tr>
+          <th>Mes</th>
+          <th>Total Dispersado</th>
+          <th>Total Facturado</th>
+          <th>Total Pendiente</th>
+          <th>Acciones</th>
+        </tr>
+
+        {% for r in resumen %}
+        <tr>
+          <td>{{ r.mes_nombre }} {{ r.anio }}</td>
+          <td>${{ r.total_dispersiones|floatformat:2|intcomma }}</td>
+          <td>${{ r.total_facturado|floatformat:2|intcomma }}</td>
+          <td>${{ r.total_pendiente|floatformat:2|intcomma }}</td>
+          <td>
+            <a href="{% url 'reporte_detalle_dispersiones' %}?mes={{ r.mes }}&anio={{ r.anio }}" class="editar">
+              Detalle
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="text-align:center;">No hay registros de dispersión.</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+{% endblock %}

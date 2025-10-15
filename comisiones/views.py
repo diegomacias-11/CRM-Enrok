@@ -52,23 +52,24 @@ def listar_comisiones(request):
     if not anios:
         anios = [anio]
 
-    # 🔹 Query principal de comisiones
+    # 🔹 Query principal (EXCLUYE Enrok)
     qs = Comision.objects.filter(
         dispersion__fecha__month=mes,
         dispersion__fecha__year=anio
-    )
+    ).exclude(comisionista="Enrok")  # 👈 solo aquí excluimos
 
     if comisionista_filtro:
         qs = qs.filter(comisionista=comisionista_filtro)
 
     comisionistas = qs.values('comisionista').annotate(total=Sum('monto')).order_by('comisionista')
 
+    # 🔹 Totales sin Enrok
     total_comisiones = qs.aggregate(total=Sum('monto'))['total'] or 0
     total_liberado = qs.filter(estatus='Liberado').aggregate(total=Sum('monto'))['total'] or 0
 
-    # Restar solo los pagos correspondientes al periodo de la URL (no a la fecha real)
+    # 🔹 Abonos (no afecta)
     abonos = Pago.objects.filter(
-        mes=mes,  # periodo contable del pago
+        mes=mes,
         anio=anio
     )
 
@@ -80,8 +81,13 @@ def listar_comisiones(request):
     total_comisiones -= total_abonos
     total_liberado -= total_abonos
 
-    # 🔹 Comisionistas totales
-    comisionistas_todos = Comision.objects.values('comisionista').distinct().order_by('comisionista')
+    # 🔹 Lista desplegable (sin Enrok)
+    comisionistas_todos = (
+        Comision.objects.exclude(comisionista="Enrok")
+        .values('comisionista')
+        .distinct()
+        .order_by('comisionista')
+    )
 
     return render(request, 'comisiones/listar.html', {
         'comisionistas': comisionistas,

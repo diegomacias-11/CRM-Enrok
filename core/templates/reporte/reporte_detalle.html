@@ -1,0 +1,50 @@
+{% extends 'base_listar.html' %}
+{% load humanize %}
+{% block title %}Detalle de Dispersión{% endblock %}
+
+{% block title_filters %}
+  <!-- CARD SUPERIOR -->
+  <div class="card-top">
+    <h1>Facturas Pendientes - {{ mes_nombre }} {{ anio }}</h1>
+
+    <div class="pendiente-box">
+      <div>
+        <h2>Total Pendiente</h2>
+        <strong class="monto">${{ total_pendiente|floatformat:2|intcomma }}</strong>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <!-- CARD INFERIOR -->
+  <div class="card">
+    <div class="table-container">
+      <table>
+        <tr>
+          <th>Cliente</th>
+          <th>Monto</th>
+          <th>Honorarios</th>
+          <th>Estatus</th>
+        </tr>
+
+        {% for d in dispersiones %}
+        <tr>
+          <td>{{ d.cliente.nombre }}</td>
+          <td>${{ d.monto|floatformat:2|intcomma }}</td>
+          <td>${{ d.total_honorarios|floatformat:2|intcomma }}</td>
+          <td>{{ d.estatus_pago }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" style="text-align:center;">No hay facturas pendientes en este mes.</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <div style="margin-top: 2rem; text-align:center;">
+      <a href="{% url 'reporte_dispersiones' %}" class="btn filtro_pagado">Volver</a>
+    </div>
+  </div>
+{% endblock %}

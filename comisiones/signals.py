@@ -36,7 +36,26 @@ def crear_comisiones(sender, instance, created, **kwargs):
                 )
             except Exception as e:
                 print(f"⚠️ Error creando comisión para {comisionista}: {e}")
+    # 👇 Agregar utilidad Enrok (solo una vez)
+ # 👇 Crear la comisión de Enrok igual que las demás
+    try:
+        porcentaje_enrok = getattr(cliente, "utilidad_enrok", None)
+        if porcentaje_enrok:
+            porcentaje_decimal = Decimal(porcentaje_enrok) / 100
+            monto = instance.comision * porcentaje_decimal
 
+            Comision.objects.create(
+                dispersion=instance,
+                cliente=cliente,
+                comisionista="Enrok",
+                porcentaje=Decimal(porcentaje_enrok),
+                monto=monto,
+                estatus='Pendiente',
+            )
+            print(f"✅ Comisión creada para Enrok: {porcentaje_enrok}% → ${monto}")
+    except Exception as e:
+        print(f"⚠️ Error creando comisión Enrok: {e}")
+        
 @receiver(post_save, sender=Dispersion)
 def actualizar_estatus_comisiones(sender, instance, **kwargs):
     """
