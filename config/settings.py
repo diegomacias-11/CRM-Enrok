@@ -32,9 +32,12 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # settings.py 
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'enrok'
-LOGOUT_REDIRECT_URL = 'login'
+
+# Redirecciones
+LOGIN_URL = '/accounts/login/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/enrok'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -123,6 +126,22 @@ USE_I18N = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static'] 
+
+# --- CONFIGURACIÓN DE SESIÓN ---
+
+# Cerrar sesión automáticamente al cerrar el navegador
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  
+
+# Tiempo máximo de sesión (en segundos) -> 8 horas = 8 * 60 * 60
+SESSION_COOKIE_AGE = 8 * 60 * 60  
+
+# Cada vez que el usuario hace una petición, se renueva el contador
+SESSION_SAVE_EVERY_REQUEST = True  
+
+# Opcional: seguridad adicional
+SESSION_COOKIE_SECURE = False  # Cámbialo a True si usas HTTPS
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
