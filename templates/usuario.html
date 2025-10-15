@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Editar Usuario</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fuente-principal: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      font-family: var(--fuente-principal) !important;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: start center;
+      background: #0f172a;
+      margin: 0;
+      padding-top: 2rem;
+    }
+
+    .card {
+      width: min(640px, 92vw);
+      color: #0b1220;
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.25);
+      margin-top: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1.2rem;
+      color: #00142d;
+    }
+
+    .actions {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .btn {
+      height: 48px;
+      width: 120px;
+      text-decoration: none;
+      display: inline-block;
+      color: #ffffff;
+      background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
+      border: none;
+      border-radius: 10px;
+      font-weight: 400;
+      text-align: center;
+      line-height: 48px;
+      font-size: .9rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, #002952 0%, #244a7a 100%);
+    }
+
+    input {
+      width: 100%;
+      padding: .6rem;
+      margin-bottom: 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    label {
+      font-size: 0.9rem;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .volver {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #294b7c;
+      text-decoration: none;
+    }
+
+    .volver:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>Editar Perfil</h1>
+
+    <form method="post">
+      {% csrf_token %}
+      <label for="first_name">Nombre</label>
+      <input type="text" name="first_name" id="first_name" value="{{ usuario.first_name }}" />
+
+      <label for="last_name">Apellido</label>
+      <input type="text" name="last_name" id="last_name" value="{{ usuario.last_name }}" />
+
+      <label for="email">Correo electrónico</label>
+      <input type="email" name="email" id="email" value="{{ usuario.email }}" />
+
+      <div class="actions">
+        <button type="submit" class="btn">Guardar</button>
+        <a href="{% url 'enrok' %}" class="btn">Cancelar</a>
+      </div>
+    </form>
+
+    <a href="{% url 'password_change' %}" class="volver">Cambiar contraseña</a>
+  </div>
+</body>
+</html>

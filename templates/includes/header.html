@@ -1,45 +1,68 @@
 {% load static %}
 <style>
-    /* ======= USER BOX ======= */
-    .user-box {
-      display: block;
-      top: 1rem;
-      right: 1.5rem;
-      background: #ffcf56;
-      color: #0b1220;
-      align-items: center;        /* centra horizontalmente */
-      justify-content: center;    /* centra verticalmente */
-      gap: 0.25rem;
-      padding: .6rem 1.2rem;
-      border-radius: 12px;
-      font-weight: 700;
-      box-shadow: 0 4px 10px rgba(0,0,0,.15);
-      font-size: .9rem;
-      text-align: center;
-    }
-      /* ======= BOTÓN LOGOUT ======= */
-    .logout-btn {
-      all: unset;
-      margin-top: .5rem;
-      padding: 4px 10px;
-      text-decoration: none;
-      display: inline-block;
-      color: #ffcf56;
-      background: #002952;
-      border: none;
-      font-size: .7rem;
-      font-weight: 600;
-      text-align: center;
-      cursor: pointer;
-      transition: 0.3s;
-      border-radius: 12px;
-    }
+  /* ======= USER BOX ======= */
+  .user-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #ffcf56;
+    color: #0b1220;
+    gap: 0.25rem;
+    padding: .6rem 1.2rem;
+    border-radius: 12px;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(0,0,0,.15);
+    font-size: .9rem;
+    text-align: center;
+  }
 
-    .logout-btn:hover {
-      background: #244a7a;
-    }
+  .user-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: .3rem;
+  }
 
+  .user-box a {
+    color: #0b1220;
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .user-box a:hover {
+    text-decoration: underline;
+  }
+
+  .user-box small {
+    font-weight: 500;
+    font-size: .85rem;
+  }
+
+  /* ======= BOTÓN LOGOUT ======= */
+  .logout-btn {
+    all: unset;
+    margin-top: .4rem;
+    padding: 4px 10px;
+    text-decoration: none;
+    display: inline-block;
+    color: #ffcf56;
+    background: #002952;
+    border: none;
+    font-size: .7rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 12px;
+  }
+
+  .logout-btn:hover {
+    background: #244a7a;
+  }
 </style>
+
 <header class="navbar">
   <div class="container">
     <div class="logo-box">
@@ -56,9 +79,13 @@
     </nav>
 
     <div class="user-box">
-      <strong>{{ user.get_full_name|default:user.username }}</strong>
-      <small>{{ user.groups.all.0.name|default:"Sin grupo" }}</small>
-      <br>
+      <div class="user-info">
+        <a href="{% url 'usuario' %}">
+          <strong>{{ user.get_full_name|default:user.username }}</strong>
+        </a>
+        <small>{{ user.groups.all.0.name|default:"Sin grupo" }}</small>
+      </div>
+
       <form action="{% url 'logout' %}" method="post" style="display:inline;">
         {% csrf_token %}
         <button type="submit" class="logout-btn">Cerrar sesión</button>

@@ -160,7 +160,7 @@
 
 
     /* ======= BOTONES ======= */
-    .btn {
+    .btn{
       padding: 2px 8px;
       text-decoration: none;
       display: inline-block;
@@ -173,6 +173,14 @@
       font-size: .9rem;
       cursor: pointer;
       transition: 0.3s;
+    }
+
+    .a_user{
+      color: #00101f;
+      text-decoration: none;
+    }
+    .a_user:hover{
+      text-decoration: underline;
     }
 
     .btn:hover {
@@ -270,7 +278,9 @@
     <div class="logo-box">
       <img src="{% static 'img/logo.png' %}" alt="Enrok" class="logo-img">
       <div class="user_box">
-        <strong>{{ user.get_full_name|default:user.username }}</strong>
+        <a class="a_user" href="{% url 'usuario' %}">
+          <strong>{{ user.get_full_name|default:user.username }}</strong>
+        </a>
         <small>{{ user.groups.all.0.name|default:"Sin grupo" }}</small>
         <br>
           <form action="{% url 'logout' %}" method="post" style="display:inline;">

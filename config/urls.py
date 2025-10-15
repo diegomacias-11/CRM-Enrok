@@ -21,13 +21,23 @@ from core.forms import LoginForm
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # Auth (usa tu template templates/auth/login.html)
-    path('accounts/login/',LoginView.as_view(template_name='auth/login.html', authentication_form=LoginForm),name='login'),
+
+    # --- Autenticación principal ---
+    path(
+        'accounts/login/',
+        LoginView.as_view(template_name='auth/login.html', authentication_form=LoginForm),
+        name='login'
+    ),
     path('accounts/logout/', LogoutView.as_view(), name='logout'),
-    # Core (redirige post-login por rol)
+
+    # --- Rutas integradas de Django (cambio de contraseña, reset, etc.) ---
+    path('accounts/', include('django.contrib.auth.urls')),  # 👈 Esta es la clave
+
+    # --- Core (redirección post-login) ---
     path('', include('core.urls')),
-    # Tus apps
-    path('clientes/', include('clientes.urls')),       # Incluye las URLs de la app clientes
+
+    # --- Apps del sistema ---
+    path('clientes/', include('clientes.urls')),
     path('dispersiones/', include('dispersiones.urls')),
     path('comisiones/', include('comisiones.urls')),
 ]
