@@ -58,6 +58,10 @@ body {
   color: #fff;
 }
 
+.logo-img:hover{
+  transform: scale(1.10);
+}
+
 .nav-links {
   display: flex;
   gap: 1.5rem;
@@ -92,7 +96,7 @@ body {
   overflow-y: auto;
 }
 .card-top {
-  margin-top: 3rem;
+  margin-top: 5rem;
 }
 /* ======= TITULOS ======= */
 h1 {
@@ -286,6 +290,45 @@ th {
 .table-container::-webkit-scrollbar-thumb:hover {
   background: #8094b0;
 }
+
+    /* ======= USER BOX ======= */
+    .user-box {
+      display: block;
+      top: 1rem;
+      right: 1.5rem;
+      background: #ffcf56;
+      color: #0b1220;
+      align-items: center;        /* centra horizontalmente */
+      justify-content: center;    /* centra verticalmente */
+      gap: 0.25rem;
+      padding: .6rem 1.2rem;
+      border-radius: 12px;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(0,0,0,.15);
+      font-size: .9rem;
+      text-align: center;
+    }
+      /* ======= BOTÓN LOGOUT ======= */
+    .logout-btn {
+      all: unset;
+      margin-top: .5rem;
+      padding: 4px 10px;
+      text-decoration: none;
+      display: inline-block;
+      color: #ffcf56;
+      background: #002952;
+      border: none;
+      font-size: .7rem;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s;
+      border-radius: 12px;
+    }
+
+    .logout-btn:hover {
+      background: #244a7a;
+    }
 
 /* ======= RESPONSIVE ======= */
 @media (max-width: 800px) {

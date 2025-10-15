@@ -104,9 +104,8 @@
 
     /* ======= PENDIENTE BOX ======= */
     .pendiente-box {
-      margin-top: 3rem;
-      width: 292px;
-      height: 70px;
+      width: 190px;
+      height: 150px;
       background: linear-gradient(135deg, #002952 0%, #244a7a 100%);
       color: white; 
       padding: 0.3rem; 
@@ -118,7 +117,7 @@
       align-items: center;
     }
 
-    .pendiente-box h2 { 
+    .pendiente-box h2, .reporte h2 { 
       margin: 0; 
       font-size: 1rem; 
       font-weight: 900; 
@@ -130,6 +129,35 @@
       margin: 0;
       color: #ffcf56;
     }
+/* ======= STATS BOX (Contenedor) ======= */
+.stats-box {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  align-items: center;
+}
+
+/* ======= REPORTES BOX ======= */ 
+.reporte {
+  width: 190px;
+  height: 150px;
+  background: linear-gradient(135deg, #002952 0%, #244a7a 100%);
+  color: white; 
+  padding: 0.3rem; 
+  border-radius: 12px; 
+  text-align: center; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+}
+
+
+.reporte:hover {
+  transform: scale(1.03);
+}
+
 
     /* ======= BOTONES ======= */
     .btn {
@@ -187,6 +215,7 @@
 
     /* ======= INSPIRACIÓN ======= */
     .insp {
+      margin-left: 1rem;
       position: relative;
       width: 750px;
       height: 500px;
@@ -195,7 +224,6 @@
       box-shadow: 0 8px 20px rgba(0,0,0,.12);
       border: 1px solid #aebed2;
       margin-top: 1rem;
-      margin-left: auto;
     }
 
     .frase-dia {
@@ -263,10 +291,17 @@
         <div class="calendar">
           <iframe src="https://calendar.google.com/calendar/embed?src=918d8566d66d31dd658f6f0c95cd23441c22fe7db57bc5b3d7d28fa7c9a7caba%40group.calendar.google.com&ctz=America%2FMexico_City"></iframe>
         </div>
-        <div class="pendiente-box">
-          <h2>Clientes activos:</h2>
-          <strong class="monto">{{ clientes|length }}</strong>
+    <div class="stats-box">
+      <div class="pendiente-box">
+        <h2>Clientes activos:</h2>
+        <strong class="monto">{{ clientes|length }}</strong>
+      </div>
+      <a href="#" class="reporte">
+        <div>
+          <h2>Ver reportes</h2>
         </div>
+      </a>
+    </div>
       </div>
 
       <div class="insp">
