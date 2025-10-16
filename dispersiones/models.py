@@ -35,4 +35,8 @@ class Dispersion(models.Model):
     def comisiones_pagadas(self):
         # Devuelve True si todas las comisiones asociadas están en 'Pagado'
         return self.comisiones.exists() and all(c.estatus == "Pagado" for c in self.comisiones.all())
-    
+
+    class Meta:
+        permissions = [
+            ("actualizar_estatus_dispersion", "Puede actualizar estatus de pago en dispersiones"),
+        ]

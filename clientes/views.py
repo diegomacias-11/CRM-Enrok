@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ClienteForm
 from .models import Cliente
+from django.contrib.auth.decorators import permission_required
+
 
 # ==========================
 # LISTAR CLIENTES
 # ==========================
+@permission_required('clientes.view_cliente', raise_exception=True)
 def listar_clientes(request):
     cliente_id = request.GET.get('cliente')
     clientes = Cliente.objects.all().order_by('nombre')
@@ -21,6 +24,7 @@ def listar_clientes(request):
 # ==========================
 # AGREGAR CLIENTE
 # ==========================
+@permission_required('clientes.add_cliente', raise_exception=True)
 def agregar_cliente(request):
     if request.method == 'POST':
         form = ClienteForm(request.POST)
@@ -36,6 +40,7 @@ def agregar_cliente(request):
 # ==========================
 # EDITAR CLIENTE
 # ==========================
+@permission_required('clientes.change_cliente', raise_exception=True)
 def editar_cliente(request, id):
     cliente = get_object_or_404(Cliente, id=id)
 
@@ -56,6 +61,7 @@ def editar_cliente(request, id):
 # ==========================
 # ELIMINAR CLIENTE
 # ==========================
+@permission_required('clientes.delete_cliente', raise_exception=True)
 def eliminar_cliente(request, id):
     cliente = get_object_or_404(Cliente, id=id)
     cliente.delete()

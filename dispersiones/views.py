@@ -5,6 +5,7 @@ from datetime import datetime
 from clientes.models import Cliente
 from django.db.models import Sum
 from datetime import datetime
+from django.contrib.auth.decorators import permission_required
 
 MESES_ES = {
     1: "Enero",
@@ -21,6 +22,7 @@ MESES_ES = {
     12: "Diciembre",
 }
 
+@permission_required('dispersiones.view_dispersion', raise_exception=True)
 def lista_dispersiones(request):
     mes = request.GET.get('mes')
     anio = request.GET.get('anio')
@@ -78,6 +80,7 @@ def lista_dispersiones(request):
         'total_montos': total_montos,
     })
 
+@permission_required('dispersiones.add_dispersion', raise_exception=True)
 def agregar_dispersion(request):
     mes = request.GET.get('mes')
     anio = request.GET.get('anio')
@@ -102,22 +105,30 @@ def agregar_dispersion(request):
     })
 
 
+@permission_required('dispersiones.change_dispersion', raise_exception=True)
 def editar_dispersion(request, pk):
     dispersion = get_object_or_404(Dispersion, pk=pk)
-    mes = request.GET.get('mes')
-    anio = request.GET.get('anio')
-    next_url = f'/dispersiones/listar/?mes={mes}&anio={anio}'
-    mes = int(request.GET.get('mes', datetime.now().month))
-    anio = int(request.GET.get('anio', datetime.now().year))
+
+    # 👇 Capturamos primero los parámetros originales de la URL
+    mes_str = request.GET.get('mes')
+    anio_str = request.GET.get('anio')
+
+    # 👇 Creamos la URL de retorno ANTES de convertir a int
+    next_url = f'/dispersiones/listar/?mes={mes_str}&anio={anio_str}'
+
+    # 👇 Ahora sí, convertimos a int para usar en el form
+    mes = int(mes_str or datetime.now().month)
+    anio = int(anio_str or datetime.now().year)
 
     if request.method == 'POST':
         form = DispersionForm(request.POST, instance=dispersion, mes=mes, anio=anio)
         if form.is_valid():
             form.save()
-            return redirect(request.POST.get('next', '/dispersiones/listar/'))
+            # Redirigimos al next_url conservando el mes/año originales
+            return redirect(request.POST.get('next', next_url))
     else:
         form = DispersionForm(instance=dispersion)
-    
+
     return render(request, 'dispersiones/editar.html', {
         'form': form,
         'titulo': 'Editar Dispersión',
@@ -125,17 +136,14 @@ def editar_dispersion(request, pk):
         'next_url': next_url
     })
 
-
-def dispersiones_exito(request):
-    return render(request, 'dispersiones/exito.html')
-
-
+@permission_required('dispersiones.delete_dispersion', raise_exception=True)
 def dispersiones_eliminar(request, pk):
     dispersion = get_object_or_404(Dispersion, pk=pk)
     next_url = request.POST.get('next', request.META.get('HTTP_REFERER', '/dispersiones/listar/'))
     dispersion.delete()
     return redirect(next_url)
 
+@permission_required('dispersiones.actualizar_estatus_dispersion', raise_exception=True)
 def actualizar_estatus_dispersion(request):
     if request.method == "POST":
         dispersion_id = int(request.POST.get("id"))

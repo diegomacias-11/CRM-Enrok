@@ -86,7 +86,7 @@
         <td>{{ disp.comentarios }}</td>
         <td>{{ disp.estatus_periodo }}</td>
 
-        <td><a href="{% url 'dispersiones_editar' disp.id %}" class="editar">Editar</a></td>
+        <td><a href="{% url 'dispersiones_editar' disp.id %}?mes={{ mes }}&anio={{ anio }}" class="editar">Editar</a></td>
 
         <td>
           <form method="post" action="{% url 'actualizar_estatus_dispersion' %}">

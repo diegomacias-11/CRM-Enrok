@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso Denegado</title>
+  <style>
+    :root {
+      --fuente-principal: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      font-family: var(--fuente-principal) !important;
+      box-sizing: border-box;
+    }
+
+    /* ======= BODY ======= */
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: start center;
+      background: #0f172a;
+      margin: 0;
+      padding-top: 2rem;
+    }
+
+    /* ======= CARD GENERAL ======= */
+    .card,
+    .card-top {
+      width: 95vw;
+      max-width: 1200px;
+      margin: 1rem;
+      background: #ffffff;
+      color: #0b1220;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.25);
+    }
+
+    .card {
+      min-height: 80vh;
+      overflow-y: auto;
+    }
+    .card-top {
+      margin-top: 5rem;
+    }
+    /* ======= TITULOS ======= */
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      margin-top: 0rem;
+    }
+
+    /* ======= BOTONES Y SELECTS ======= */
+    .filtro_pagado {
+      padding: 4px 8px;
+      text-decoration: none;
+      display: inline-block;
+      color: #ffcf56;
+      background: linear-gradient(135deg, #00101f 0%, #294b7c 100%);
+      border: none;
+      font-weight: 200;
+      text-align: center;
+      line-height: 30px;
+      font-size: .9rem;
+      cursor: pointer;
+      transition: 0.3s;
+      border-radius: 12px;
+    }
+    /* ======= HOVERS ======= */
+    .filtro_pagado:hover {
+      background: linear-gradient(135deg, #002952 0%, #244a7a 100%);
+    }
+  </style>
+</head>
+<body>
+  <div class="card-top">
+      <h1>🚫 Acceso Denegado 🚫</h1>
+      <form action="{{ request.META.HTTP_REFERER|default:'/' }}" method="get" style="text-align:center;">
+        <button type="submit" class="filtro_pagado" >Volver</button>
+      </form>
+  </div>
+</body>
+</html>

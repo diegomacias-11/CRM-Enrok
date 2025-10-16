@@ -5,6 +5,8 @@ from datetime import datetime
 from .forms import PagoForm
 from urllib.parse import urlparse, parse_qs, unquote
 from datetime import date
+from django.contrib.auth.decorators import permission_required
+
 
 MESES_ES = {
     1: "Enero",
@@ -21,6 +23,7 @@ MESES_ES = {
     12: "Diciembre",
 }
 
+@permission_required('comisiones.view_comision', raise_exception=True)
 def listar_comisiones(request):
     liberar_comisiones_mes_anterior()
 
@@ -101,6 +104,7 @@ def listar_comisiones(request):
         'total_liberado': total_liberado,
     })
 
+@permission_required('comisiones.view_comision', raise_exception=True)
 def detalle_comisiones(request, comisionista):
     from urllib.parse import urlparse, parse_qs
     volver_url = request.GET.get('volver', '/comisiones/listar/')
@@ -142,6 +146,7 @@ def detalle_comisiones(request, comisionista):
 
     return render(request, 'comisiones/detalle.html', context)
 
+@permission_required('comisiones.add_pago', raise_exception=True)
 def registrar_pago(request, comisionista, pago_id=None):
     # URL de retorno
     next_url = request.GET.get('next', f'/comisiones/detalle/{comisionista}/')
@@ -200,6 +205,7 @@ def registrar_pago(request, comisionista, pago_id=None):
     })
 
 
+@permission_required('comisiones.change_pago', raise_exception=True)
 def editar_pago(request, comisionista, pago_id):
     pago = get_object_or_404(Pago, pk=pago_id, comisionista=comisionista)
     next_url = request.GET.get('next', f'/comisiones/detalle/{comisionista}/')
@@ -246,56 +252,6 @@ def editar_pago(request, comisionista, pago_id):
         'next_url': next_url,
     })
 
-def actualizar_estatus_dispersion(request):
-    if request.method == "POST":
-        try:
-            dispersion_id = int(request.POST.get("id"))
-            nuevo_estatus = request.POST.get("estatus_pago")
-            
-            dispersion = Dispersion.objects.get(id=dispersion_id)
-            dispersion.estatus_pago = nuevo_estatus
-            dispersion.save(update_fields=["estatus_pago"])
-            
-            cliente = dispersion.cliente
-            mes = dispersion.fecha.month
-            anio = dispersion.fecha.year
-
-            # Actualizamos la comisión de esta dispersión según su estatus actual
-            Comision.objects.filter(dispersion=dispersion).update(estatus=nuevo_estatus)
-
-            # Revisamos todas las dispersiones del cliente en ese mes
-            todas_dispersiones = Dispersion.objects.filter(
-                cliente=cliente,
-                fecha__month=mes,
-                fecha__year=anio
-            )
-
-            # Si todas están pagadas → liberamos solo si ya es el siguiente mes
-            if todas_dispersiones.exists() and all(d.estatus_pago == "Pagado" for d in todas_dispersiones):
-                hoy = date.today()
-                if (hoy.year > anio) or (hoy.year == anio and hoy.month > mes):
-                    Comision.objects.filter(
-                        cliente=cliente,
-                        dispersion__fecha__month=mes,
-                        dispersion__fecha__year=anio
-                    ).update(estatus="Liberado")
-                else:
-                    Comision.objects.filter(
-                        cliente=cliente,
-                        dispersion__fecha__month=mes,
-                        dispersion__fecha__year=anio
-                    ).update(estatus="Pagado")
-            else:
-                # Alguna dispersión no está pagada → reflejar estatus real
-                for d in todas_dispersiones:
-                    Comision.objects.filter(dispersion=d).update(estatus=d.estatus_pago)
-
-            return redirect(request.META.get('HTTP_REFERER', '/dispersiones/listar/'))
-        
-        except Exception as e:
-            return redirect('/dispersiones/listar/')
-    
-    return redirect('/dispersiones/listar/')
 
 def liberar_comisiones_mes_anterior():
     """
