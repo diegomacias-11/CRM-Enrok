@@ -59,7 +59,7 @@ body {
 }
 
 .logo-img:hover{
-  transform: scale(1.10);
+  transform: scale(1.);
 }
 
 .nav-links {
@@ -94,6 +94,7 @@ body {
 .card {
   min-height: 80vh;
   overflow-y: auto;
+  margin-bottom: 3rem;
 }
 .card-top {
   margin-top: 5rem;
@@ -348,4 +349,159 @@ th {
     left: 2rem;
     top: 6rem;
   }
+}
+/* ==== Layout: fijar altura y desplazar solo la tabla ==== */
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;      /* limita a la altura de la ventana */
+  overflow: hidden;   /* evita scroll en la pantalla completa */
+}
+
+.card {
+  /* anula el scroll del card, dejando que lo haga solo la tabla */
+  min-height: 0;
+  height: auto;
+  flex: 1 1 auto;     /* ocupa el espacio restante debajo de .card-top */
+  overflow: hidden;   /* no scrollea el card, solo su contenido */
+  display: flex;
+  flex-direction: column;
+}
+
+.table-container {
+  /* la tabla se expande dentro del card y maneja su propio scroll */
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  max-height: none;   /* se controla por el alto del card */
+}
+/* ==== Tabla: scroll horizontal sin cortar ==== */
+.table-container {
+  /* permitir scroll explícito en ambos ejes */
+  overflow-x: auto;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* la tabla puede crecer más allá del ancho del contenedor si es necesario */
+.table-container table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+}
+
+/* evitar cortes de contenido en celdas, salvo excepciones específicas */
+.table-container th,
+.table-container td {
+  white-space: nowrap;
+}
+
+/* permitir múltiples líneas en la columna de Comentarios (12ª) */
+.table-container th:nth-child(12),
+.table-container td:nth-child(12) {
+  white-space: normal;
+  max-width: 420px; /* ajustable */
+  word-break: break-word;
+}
+
+/* permitir múltiples líneas también en la columna Nombre (2ª) */
+.table-container th:nth-child(2),
+.table-container td:nth-child(2) {
+  white-space: normal;
+  max-width: 280px; /* ajustable */
+  word-break: break-word;
+}
+
+/* encabezado fijo dentro del contenedor al hacer scroll vertical */
+.table-container tr:first-child th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+/* ==== Scrollbars unificados y más transparentes ==== */
+/* Firefox */
+.table-container {
+  scrollbar-width: thin; /* grosor fino y uniforme */
+  scrollbar-color: rgba(174,190,210,.35) transparent;
+}
+/* WebKit (Chrome, Edge, Safari) */
+.table-container::-webkit-scrollbar {
+  width: 8px;   /* grosor vertical */
+  height: 8px;  /* grosor horizontal */
+}
+.table-container::-webkit-scrollbar-thumb {
+  background-color: rgba(174,190,210,.35); /* más transparente */
+  border-radius: 12px;
+  background-clip: padding-box;
+  border: 2px solid transparent; /* crea efecto de transparencia */
+}
+.table-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(128,148,176,.55);
+}
+.table-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.table-container::-webkit-scrollbar-corner {
+  background: transparent;
+}
+/* ==== Compactar card-top para ganar altura al listado ==== */
+.card-top {
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+  margin-top: 4rem;      /* antes: 5rem */
+  margin-bottom: .5rem;  /* reduce separación con la tabla */
+}
+
+.card-top h1 {
+  margin-bottom: .5rem;  /* antes: 1rem */
+}
+
+.card-top .pendiente-box {
+  padding: .5rem .75rem; /* antes: 1rem */
+  gap: 2rem;             /* antes: 6rem */
+}
+
+.card-top .actions {
+  gap: .4rem;            /* antes: .6rem */
+}
+
+.card-top .actions form {
+  gap: .4rem;            /* antes: .6rem */
+}
+
+.card-top select {
+  padding: 4px 6px;      /* antes: 7px 8px */
+}
+
+.card-top .btn,
+.card-top .btn_filtros {
+  line-height: 26px;     /* antes: 30px */
+  padding: 2px 8px;      /* antes: 4px 8px */
+}
+
+.card-top .pendiente-box > div {
+  min-width: 140px;      /* antes: 180px */
+}
+
+.card-top .pendiente-box h2,
+.card-top .pendiente-box .monto,
+.card-top .pendiente-box p {
+  font-size: .95rem;     /* compacta tipografía levemente */
+}
+
+.card {
+  margin-bottom: 1rem;   /* antes: 3rem, evita desperdiciar alto útil */
+}
+/* ==== Compactar título y monto en pendiente-box ==== */
+.card-top .pendiente-box:not(:has(> div)) {
+  gap: 0.15rem; /* antes: 0.3rem */
+}
+
+.card-top .pendiente-box h2,
+.card-top .pendiente-box .monto {
+  margin: 0;
+  line-height: 1.05; /* acerca más las líneas */
 }
