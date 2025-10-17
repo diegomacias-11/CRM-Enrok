@@ -2,7 +2,7 @@ from django import forms
 from .models import Dispersion
 
 class DispersionForm(forms.ModelForm):
-    estatus = forms.ChoiceField(choices=[
+    estatus_proceso = forms.ChoiceField(choices=[
         ('Pendiente', 'Pendiente'),
         ('Enviada', 'Enviada'),
         ('Aplicada', 'Aplicada'),        
@@ -20,11 +20,12 @@ class DispersionForm(forms.ModelForm):
         model = Dispersion  
         fields = [
             'fecha','cliente', 'num_factura', 'monto', 'num_factura_honorarios',
-            'estatus', 'estatus_periodo', 'comentarios'
+            'estatus_proceso', 'num_periodo', 'estatus_periodo', 'comentarios',
         ]
         labels = {
             'num_factura_honorarios': 'Número de factura honorarios',
             'num_factura': 'Número de factura',
+            'num_periodo': 'Número de periodo',
         }
         widgets = {
             'comentarios': forms.Textarea(attrs={'rows': 3}),

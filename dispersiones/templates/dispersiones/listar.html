@@ -65,9 +65,10 @@
         <th>Comisión</th>
         <th>Num. H</th>
         <th>Honorarios</th>
+        <th>Proceso</th>
+        <th>Num. Periodo</th>
         <th>Estatus</th>
         <th>Comentarios</th>
-        <th>Periodo</th>
         <th>Acciones</th>
         <th>Pago</th>
       </tr>
@@ -82,9 +83,11 @@
         <td>${{ disp.comision|floatformat:2|intcomma }}</td>
         <td>{{ disp.num_factura_honorarios|default_if_none:"" }}</td>
         <td>${{ disp.total_honorarios|floatformat:2|intcomma }}</td>
-        <td>{{ disp.estatus }}</td>
-        <td>{{ disp.comentarios }}</td>
+        <td>{{ disp.estatus_proceso }}</td>
+        <td>{{ disp.num_periodo|default_if_none:""}}</td>
         <td>{{ disp.estatus_periodo }}</td>
+        <td>{{ disp.comentarios }}</td>
+
 
         <td><a href="{% url 'dispersiones_editar' disp.id %}?mes={{ mes }}&anio={{ anio }}" class="editar">Editar</a></td>
 
