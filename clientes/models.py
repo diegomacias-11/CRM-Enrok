@@ -5,6 +5,7 @@ class Cliente(models.Model):
     comision_procom = models.FloatField(blank=True, null=True)
     factura = models.CharField(blank=True, null=True)
     nombre = models.CharField(max_length=150)
+    tipo_persona = models.CharField(max_length=50)
     utilidad_enrok = models.FloatField(blank=True, null=True)
     # Campos para comisionistas y sus porcentajes
     comisionista_1 = models.CharField(max_length=100, blank=True, null=True)

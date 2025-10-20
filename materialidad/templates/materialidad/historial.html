@@ -1,0 +1,36 @@
+{% extends 'base_listar.html' %}
+{% block title %}Historial de {{ tipo_documento }}{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h2 style="text-align:center;">
+    Historial de versiones: {{ tipo_documento }} <br>
+    <small>{{ cliente.nombre }}</small>
+  </h2>
+
+  <div class="table-container">
+    <table>
+      <tr>
+        <th>Fecha de Subida</th>
+        <th>Descripción</th>
+        <th>Archivo</th>
+      </tr>
+      {% for doc in historial %}
+      <tr>
+        <td>{{ doc.fecha_subida|date:"d/m/Y H:i" }}</td>
+        <td>{{ doc.descripcion|default:"—" }}</td>
+        <td><a href="{{ doc.archivo.url }}" target="_blank" class="editar">Ver</a></td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="3" style="text-align:center;">Sin versiones previas.</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div style="text-align:center; margin-top:1rem;">
+    <a href="{% url 'materialidad_detalle' cliente.id %}" class="btn filtro_pagado">Volver</a>
+  </div>
+</div>
+{% endblock %}

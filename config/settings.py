@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-f1jr5*sqgqqunjx_n+=ex-)y$*a0o%5wh9(j%%)kq^0e0akv-*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.100.20']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.100.31']
 
 # settings.py 
 
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'comisiones',
     'django.contrib.humanize',
     'core',
+    'materialidad',
 ]
 
 MIDDLEWARE = [
@@ -148,3 +149,9 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+GOOGLE_DRIVE_CREDENTIALS_FILE = BASE_DIR / 'config/credentials/enrok-462622-9751378c7af3.json'
+GOOGLE_DRIVE_ROOT_FOLDER_ID = '1mj8Vxwd6-J0QZ_k1jFxnkuqegRehSe--'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

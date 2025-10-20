@@ -1,0 +1,62 @@
+{% extends 'base_listar.html' %}
+{% load humanize %}
+{% block title %}Lista de Documentos{% endblock %}
+
+{% block title_filters %}
+<div class="card-top">
+  <h1>Documentación Corportativa</h1>
+  <div class="pendiente-box">
+    <h2>Clientes con documentación corporativa completa</h2>
+    <p class="monto">{{ total_documentos }}</p>
+  </div>
+
+  <div class="actions">
+    <form method="get" action="{% url 'materialidad_listar' %}" class="filtro">
+      <select name="cliente">
+        <option value="">-- Todos los clientes --</option>
+        {% for c in clientes %}
+        <option value="{{ c.id }}" {% if cliente|stringformat:"s" == c.id|stringformat:"s" %}selected{% endif %}>
+          {{ c.nombre }}
+        </option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn" style="border-radius: 12px">Filtrar</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block content %}
+<div class="card">
+  <div class="table-container">
+    <table>
+      <tr>
+        <th>Cliente</th>
+        <th>Total Documentos</th>
+        <th>Acciones</th>
+      </tr>
+
+      {% for c in resumen_clientes %}
+      <tr>
+        <td>{{ c.nombre }}</td>
+        <td>
+          {% if c.total_documentos > 0 %}
+            {{ c.total_documentos }}
+          {% else %}
+            <span style="color:#999;">0</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'materialidad_detalle' c.id %}" class="editar">Detalle</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="3" style="text-align:center;">No hay clientes registrados.</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}

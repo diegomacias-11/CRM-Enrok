@@ -1,0 +1,71 @@
+{% extends 'base_listar.html' %}
+{% load humanize %}
+{% block title %}Detalle de Documentos{% endblock %}
+
+{% block title_filters %}
+  <div class="card-top">
+    <h1>Documentos corporativa de {{ cliente.nombre }}</h1>
+    <div class="pendiente-box">
+    <h2>Cumplimiento de documentación corporativa</h2>
+    <p class="monto">
+        {{ porcentaje }}%
+    </p>
+    <small style="color:#c3ccda;">
+        ({{ completados }}/{{ total_requeridos }} documentos cargados)
+    </small>
+    </div>
+
+    <div class="actions" style="width:100%; justify-content:center;">
+      <a href="{% url 'materialidad_agregar' %}?cliente={{ cliente.id }}" 
+         class="btn filtro_pagado" 
+         style="border-radius:12px; color:#fff; width:100%;">
+         Subir o actualizar documento
+      </a>
+    </div>
+  </div>
+{% endblock %}
+
+
+{% block content %}
+  <div class="card">
+    <div style="display:flex; justify-content:center;">
+      <div style="flex:1; min-width:600px; max-width:1000px;">
+        <h2 style="text-align:center;">Documentos del Cliente</h2>
+        <div class="table-container">
+          <table>
+            <tr>
+              <th>Tipo de Documento</th>
+              <th>Descripción</th>
+              <th>Archivo</th>
+              <th>Fecha de Subida</th>
+              <th>Acciones</th>
+            </tr>
+
+            {% for doc in documentos %}
+            <tr>
+              <td>{{ doc.tipo_documento|capfirst }}</td>
+              <td>{{ doc.descripcion|default:"—" }}</td>
+              <td>
+                <a href="{{ doc.archivo.url }}" target="_blank" class="editar">Ver</a>
+              </td>
+              <td>{{ doc.fecha_subida|date:"d/m/Y H:i" }}</td>
+              <td>
+                <a href="{% url 'materialidad_historial' cliente.id doc.tipo_documento %}" class="editar">Historial</a>
+                <a href="{% url 'materialidad_editar' doc.id %}" class="editar">Editar</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" style="text-align:center;">No hay documentos registrados.</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:.5rem; text-align:center;">
+      <a href="{% url 'materialidad_listar' %}" class="btn filtro_pagado">Volver</a>
+    </div>
+  </div>
+{% endblock %}

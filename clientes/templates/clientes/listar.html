@@ -38,6 +38,7 @@
       <table>
         <tr>
           <th>Nombre</th>
+          <th>Tipo de Persona</th>
           <th>Servicio</th>
           <th>Comisión PROCOM</th>
           <th>Factura</th>
@@ -47,6 +48,7 @@
         {% for cliente in clientes %}
         <tr>
           <td>{{ cliente.nombre }}</td>
+          <td>{{ cliente.tipo_persona }}</td>
           <td>{{ cliente.servicio }}</td>
           <td>{{ cliente.comision_procom }}%</td>
           <td>{{ cliente.factura }}</td>
