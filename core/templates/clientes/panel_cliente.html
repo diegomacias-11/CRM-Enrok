@@ -50,6 +50,10 @@
       padding: 1.5rem;
       border-radius: 12px;
     }
+    .logo-box {
+      width: 100%;
+      box-sizing: border-box;
+    }
 
     .logo-img {
       height: 70px;
@@ -283,40 +287,26 @@
         </a>
         <small>{{ user.groups.all.0.name|default:"Sin grupo" }}</small>
         <br>
-          <form action="{% url 'logout' %}" method="post" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" class="logout_btn">Cerrar sesión</button>
-          </form>
+        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="logout_btn">Cerrar sesión</button>
+        </form>
       </div>
     </div>
 
     <div class="actions">
-      <a class="btn" href="/clientes/listar" style="border-radius: 12px 0 0 12px;"><h2>Clientes</h2></a>
-      <a class="btn" href="/dispersiones/listar"><h2>Dispersiones</h2></a>
-      <a class="btn" href="/comisiones/listar"><h2>Comisiones</h2></a>
-      <a class="btn" href="/materialidad/listar" style="border-radius: 0 12px 12px 0;"><h2>Documentación</h2></a>
-    </div>
-
-    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-top:1rem;">
-      <div style="display:grid; gap:1rem;">
-        <div class="calendar">
-          <iframe src="https://calendar.google.com/calendar/embed?src=918d8566d66d31dd658f6f0c95cd23441c22fe7db57bc5b3d7d28fa7c9a7caba%40group.calendar.google.com&ctz=America%2FMexico_City"></iframe>
-        </div>
-    <div class="stats-box">
-      <div class="pendiente-box">
-        <h2>Clientes activos:</h2>
-        <strong class="monto">{{ clientes|length }}</strong>
-      </div>
-      <a href="{% url 'reporte_dispersiones' %}" class="reporte">
-        <div>
-          <h2>Ver reportes</h2>
-        </div>
+      <a class="btn" href="{% url 'dispersiones_cliente' %}" style="border-radius: 12px 0 0 12px;">
+        <h2>Dispersiones</h2>
+      </a>
+      <a class="btn" href="{% url 'materialidad_detalle' cliente.id %}" style="border-radius: 0 12px 12px 0;">
+        <h2>Documentación corporativa</h2>
       </a>
     </div>
-      </div>
 
-      <div class="insp">
-        <img src="{% static 'img/insp.jpg' %}" alt="insp" style="width:100%;height:100%;object-fit:cover;display:block;">
+    <div style="display:flex; align-items:flex-start; justify-content:center; margin-top:1rem;">
+      <div class="insp" style="width:100%; max-width:1000px; height:500px;">
+        <img src="{% static 'img/insp.jpg' %}" alt="insp"
+             style="width:100%;height:100%;object-fit:cover;display:block;">
       </div>
     </div>
   </div>

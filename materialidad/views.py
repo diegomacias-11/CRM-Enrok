@@ -1,55 +1,43 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.db.models import Count, Max
+from django.db.models import Max
 from .models import DocumentoMaterialidad
 from .forms import DocumentoMaterialidadForm
 from clientes.models import Cliente
 
 
-# --- LISTAR DOCUMENTOS AGRUPADOS POR CLIENTE ---
+# --- LISTAR ---
 def materialidad_listar(request):
+    if request.user.groups.filter(name="Cliente").exists():
+        cliente = Cliente.objects.filter(usuario=request.user).first()
+        if cliente:
+            return redirect("materialidad_detalle", cliente_id=cliente.id)
+
     cliente_id = request.GET.get("cliente")
 
-    # --- Definimos los requerimientos por tipo ---
     DOCS_FISICA = {"csf", "ine", "domicilio", "generales"}
-    DOCS_MORAL = {"acta_constitutiva", "poder", "identificacion_apoderado", "domicilio", "rfc", "opinion_cumplimiento", "csf"}
+    DOCS_MORAL = {"acta_constitutiva", "poder", "identificacion_apoderado",
+                  "domicilio", "rfc", "opinion_cumplimiento", "csf"}
 
-    # Todos los clientes (aunque no tengan documentos)
     clientes = Cliente.objects.all().order_by("nombre")
-
-    # Contar documentos existentes por cliente
-    documentos = DocumentoMaterialidad.objects.select_related("cliente")
-    resumen_clientes = documentos.values("cliente__id").annotate(total=Count("id"))
-    totales = {item["cliente__id"]: item["total"] for item in resumen_clientes}
-
     lista_clientes = []
-    clientes_completos = 0  # contador de clientes con 100% de cumplimiento
+    clientes_completos = 0
 
     for cliente in clientes:
-        docs_cliente = DocumentoMaterialidad.objects.filter(cliente=cliente).values_list("tipo_documento", flat=True)
-        docs_set = set(docs_cliente)
-
-        # Determinar tipo de persona y sus requerimientos
-        if cliente.tipo_persona.lower().strip() in ["persona física", "fisica"]:
-            requeridos = DOCS_FISICA
-        else:
-            requeridos = DOCS_MORAL
-
-        # Evaluar cumplimiento
+        docs = DocumentoMaterialidad.objects.filter(cliente=cliente).values_list("tipo_documento", flat=True)
+        docs_set = set(docs)
+        requeridos = DOCS_FISICA if cliente.tipo_persona.lower().strip() in ["persona física", "fisica"] else DOCS_MORAL
         cumple = requeridos.issubset(docs_set)
         if cumple:
             clientes_completos += 1
-
         lista_clientes.append({
             "id": cliente.id,
             "nombre": cliente.nombre,
-            "tipo_persona": cliente.tipo_persona,
             "total_documentos": len(docs_set),
             "requeridos": len(requeridos),
             "cumple": cumple,
         })
 
-    # Si hay filtro por cliente
     if cliente_id:
         lista_clientes = [c for c in lista_clientes if str(c["id"]) == str(cliente_id)]
 
@@ -57,15 +45,19 @@ def materialidad_listar(request):
         "resumen_clientes": lista_clientes,
         "clientes": clientes,
         "cliente": cliente_id,
-        "total_documentos": clientes_completos,  # 👈 este es el total con cumplimiento al 100%
+        "total_documentos": clientes_completos,
     })
 
 
-# --- DETALLE DE DOCUMENTOS POR CLIENTE ---
-def materialidad_detalle(request, cliente_id):
-    cliente = get_object_or_404(Cliente, id=cliente_id)
+# --- DETALLE ---
+def materialidad_detalle(request, cliente_id=None):
+    es_cliente = request.user.groups.filter(name="Cliente").exists()
 
-    # Obtener la versión más reciente por tipo_documento
+    if es_cliente:
+        cliente = get_object_or_404(Cliente, usuario=request.user)
+    else:
+        cliente = get_object_or_404(Cliente, id=cliente_id)
+
     documentos_recientes = (
         DocumentoMaterialidad.objects
         .filter(cliente=cliente)
@@ -73,101 +65,80 @@ def materialidad_detalle(request, cliente_id):
         .annotate(ultima_fecha=Max("fecha_subida"))
     )
 
-    # Obtener los registros completos de esas últimas versiones
     documentos = DocumentoMaterialidad.objects.filter(
         cliente=cliente,
         fecha_subida__in=[d["ultima_fecha"] for d in documentos_recientes],
         tipo_documento__in=[d["tipo_documento"] for d in documentos_recientes]
     ).order_by("tipo_documento")
 
-    total_documentos = documentos.count()
+    DOCS_FISICA = ["CSF", "INE", "Comprobante de Domicilio", "Datos Generales"]
+    DOCS_MORAL = ["Acta Constitutiva", "Poder", "Identificación del Apoderado",
+                  "Comprobante de Domicilio", "RFC",
+                  "Opinión de Cumplimiento de Obligaciones Fiscales", "CSF"]
 
-    # --- Calcular cumplimiento (igual que antes) ---
-    DOCS_FISICA = [
-        "CSF",
-        "INE",
-        "Comprobante de Domicilio",
-        "Datos Generales",
-    ]
-    DOCS_MORAL = [
-        "Acta Constitutiva",
-        "Poder",
-        "Identificación del Apoderado",
-        "Comprobante de Domicilio",
-        "RFC",
-        "Opinión de Cumplimiento de Obligaciones Fiscales",
-        "CSF",
-    ]
     tipo = cliente.tipo_persona.lower().strip()
     requeridos = DOCS_FISICA if tipo in ["persona física", "fisica"] else DOCS_MORAL
 
-    def normalizar(texto):
-        return texto.lower().strip() if texto else ""
-
+    normalizar = lambda t: t.lower().strip() if t else ""
     requeridos_normalizados = [normalizar(r) for r in requeridos]
-    documentos_existentes = set(normalizar(d.tipo_documento) for d in documentos)
-    completados = sum(1 for doc in requeridos_normalizados if doc in documentos_existentes)
-    total_requeridos = len(requeridos_normalizados)
-    porcentaje = round((completados / total_requeridos) * 100, 2) if total_requeridos else 0
+    existentes = set(normalizar(d.tipo_documento) for d in documentos)
+    completados = sum(1 for doc in requeridos_normalizados if doc in existentes)
+    porcentaje = round((completados / len(requeridos_normalizados)) * 100, 2)
 
     return render(request, "materialidad/detalle.html", {
         "cliente": cliente,
         "documentos": documentos,
-        "total_documentos": total_documentos,
         "porcentaje": porcentaje,
         "completados": completados,
-        "total_requeridos": total_requeridos,
+        "total_requeridos": len(requeridos_normalizados),
+        "es_cliente": es_cliente,
     })
 
 
-# --- AGREGAR NUEVO DOCUMENTO ---
+# --- AGREGAR ---
 def materialidad_agregar(request):
     next_url = request.GET.get("next")
     cliente_id = request.GET.get("cliente")
-    cliente_obj = Cliente.objects.filter(id=cliente_id).first() if cliente_id else None
+
+    # Detectar cliente (según usuario o URL)
+    if request.user.groups.filter(name="Cliente").exists():
+        cliente_obj = Cliente.objects.filter(usuario=request.user).first()
+    else:
+        cliente_obj = Cliente.objects.filter(id=cliente_id).first()
+
+    if not cliente_obj:
+        return redirect("materialidad_listar")
 
     if request.method == "POST":
+        # 👇 Aquí se pasa el cliente en initial, igual que en GET
         form = DocumentoMaterialidadForm(request.POST, request.FILES, initial={"cliente": cliente_obj})
-
         if form.is_valid():
-            # 👇 Crear el documento sin guardar aún
             doc = form.save(commit=False)
-            if cliente_obj:
-                doc.cliente = cliente_obj  # Asignamos cliente manualmente
+            doc.cliente = cliente_obj
             doc.save()
-            
-            # Redirección
-            if next_url:
-                return redirect(next_url)
-            elif cliente_obj:
-                return redirect("materialidad_detalle", cliente_id=cliente_obj.id)
-            return redirect("materialidad_listar")
+            return redirect("materialidad_detalle", cliente_id=cliente_obj.id)
         else:
             print("❌ Errores de validación:", form.errors)
-
     else:
-        # 👉 Si venimos desde el detalle, preseleccionamos el cliente
-        form = DocumentoMaterialidadForm(initial={"cliente": cliente_obj} if cliente_obj else None)
+        form = DocumentoMaterialidadForm(initial={"cliente": cliente_obj})
 
     return render(request, "materialidad/agregar.html", {
         "form": form,
-        "next_url": next_url or reverse("materialidad_listar"),
+        "next_url": next_url or reverse("materialidad_detalle", args=[cliente_obj.id]),
     })
 
 
-# --- EDITAR / ELIMINAR DOCUMENTO ---
+# --- EDITAR ---
 def materialidad_editar(request, pk):
     doc = get_object_or_404(DocumentoMaterialidad, pk=pk)
     next_url = (
-        request.POST.get('next')
-        or request.GET.get('next')
+        request.POST.get('next') or request.GET.get('next')
         or reverse("materialidad_detalle", args=[doc.cliente.id])
     )
 
     if request.method == 'POST':
         if 'cancel' in request.POST:
             return redirect(next_url)
-
         if 'delete' in request.POST:
             doc.delete()
             return redirect(next_url)
@@ -185,6 +156,8 @@ def materialidad_editar(request, pk):
         'next_url': next_url,
     })
 
+
+# --- HISTORIAL ---
 def materialidad_historial(request, cliente_id, tipo_documento):
     cliente = get_object_or_404(Cliente, id=cliente_id)
     historial = DocumentoMaterialidad.objects.filter(

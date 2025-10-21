@@ -2,7 +2,6 @@ from django import forms
 from .models import DocumentoMaterialidad
 from clientes.models import Cliente
 
-
 class DocumentoMaterialidadForm(forms.ModelForm):
     tipo_persona = forms.CharField(
         label="Tipo de persona",
@@ -13,40 +12,32 @@ class DocumentoMaterialidadForm(forms.ModelForm):
 
     class Meta:
         model = DocumentoMaterialidad
-        fields = ['cliente', 'tipo_persona', 'tipo_documento', 'descripcion', 'archivo']
+        fields = ['tipo_persona', 'tipo_documento', 'descripcion', 'archivo']
         widgets = {
             'descripcion': forms.Textarea(attrs={'rows': 2}),
         }
 
     def __init__(self, *args, **kwargs):
+        # 👇 Capturar el cliente ANTES del super()
+        cliente = None
+        if "initial" in kwargs and isinstance(kwargs["initial"].get("cliente"), Cliente):
+            cliente = kwargs["initial"]["cliente"]
+        elif "instance" in kwargs and kwargs["instance"]:
+            cliente = kwargs["instance"].cliente
+
         super().__init__(*args, **kwargs)
 
-        # 🔒 Bloquear el campo 'cliente'
-        self.fields['cliente'].disabled = True
-
-        # Deshabilitar archivo si estamos editando
-        if self.instance and self.instance.pk:
-            self.fields['archivo'].disabled = True
-
-        cliente = None
-
-        # Obtener el cliente desde initial o la instancia
-        if 'cliente' in self.initial and isinstance(self.initial['cliente'], Cliente):
-            cliente = self.initial['cliente']
-        elif self.instance and self.instance.pk:
-            cliente = self.instance.cliente
-
-        # Si hay cliente, usar su tipo_persona para definir opciones
+        # Si hay cliente, determinar tipo_persona y opciones
         if cliente:
             tipo = cliente.tipo_persona.lower().strip()
             self.fields['tipo_persona'].initial = cliente.tipo_persona
 
             if tipo in ['persona física', 'fisica']:
                 choices = [
-                    ('csf', 'CSF'),
-                    ('ine', 'INE'),
-                    ('domicilio', 'Comprobante de Domicilio'),
-                    ('generales', 'Datos Generales'),
+                    ('CSF', 'CSF'),
+                    ('INE', 'INE'),
+                    ('Comprobante de Domicilio', 'Comprobante de Domicilio'),
+                    ('Datos Generales', 'Datos Generales'),
                 ]
             else:
                 choices = [
@@ -62,9 +53,12 @@ class DocumentoMaterialidadForm(forms.ModelForm):
             self.fields['tipo_persona'].initial = "—"
             choices = []
 
-        # Asignar opciones del tipo de documento
         self.fields['tipo_documento'] = forms.ChoiceField(
             label="Tipo de documento",
             choices=choices,
             required=True
         )
+
+        # Si estamos editando, bloquear archivo
+        if kwargs.get("instance") and kwargs["instance"].pk:
+            self.fields['archivo'].disabled = True

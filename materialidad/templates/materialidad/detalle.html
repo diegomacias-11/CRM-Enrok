@@ -4,7 +4,7 @@
 
 {% block title_filters %}
   <div class="card-top">
-    <h1>Documentos corporativa de {{ cliente.nombre }}</h1>
+    <h1>Documentos corporativos de {{ cliente.nombre }}</h1>
     <div class="pendiente-box">
     <h2>Cumplimiento de documentación corporativa</h2>
     <p class="monto">
@@ -51,7 +51,9 @@
               <td>{{ doc.fecha_subida|date:"d/m/Y H:i" }}</td>
               <td>
                 <a href="{% url 'materialidad_historial' cliente.id doc.tipo_documento %}" class="editar">Historial</a>
+                {% if not request.user.groups.all.0.name == 'Cliente' %}
                 <a href="{% url 'materialidad_editar' doc.id %}" class="editar">Editar</a>
+                {% endif %}
               </td>
             </tr>
             {% empty %}
@@ -65,7 +67,11 @@
     </div>
 
     <div style="margin-top:.5rem; text-align:center;">
-      <a href="{% url 'materialidad_listar' %}" class="btn filtro_pagado">Volver</a>
+      {% if es_cliente %}
+        <a href="{% url 'panel_cliente' %}" class="btn filtro_pagado">Volver</a>
+      {% else %}
+        <a href="{% url 'materialidad_listar' %}" class="btn filtro_pagado">Volver</a>
+      {% endif %}
     </div>
   </div>
 {% endblock %}

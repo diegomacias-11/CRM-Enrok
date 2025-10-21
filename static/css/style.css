@@ -59,7 +59,7 @@ body {
 }
 
 .logo-img:hover{
-  transform: scale(1.);
+  transform: scale(1.05);
 }
 
 .nav-links {

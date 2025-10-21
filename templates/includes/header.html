@@ -45,6 +45,11 @@
     font-weight: 500;
     font-size: .85rem;
   }
+  
+  .logo-img:hover{
+  transform: scale(1.05);
+}
+
 
   /* ======= BOTÓN LOGOUT ======= */
   .navbar.navbar--compact .logout-btn {
@@ -79,9 +84,12 @@
     </div>
 
     <nav class="nav-links">
+      {% if not request.user.groups.all.0.name == 'Cliente' %}
       <a href="{% url 'clientes_listar' %}">Clientes</a>
       <a href="{% url 'comisiones_listar' %}">Comisiones</a>
       <a href="{% url 'dispersiones_listar' %}">Dispersiones</a>
+      <a href="{% url 'materialidad_listar' %}">Documentación</a>
+      {% endif %}
     </nav>
 
     <div class="user-box">

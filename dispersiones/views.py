@@ -6,6 +6,8 @@ from clientes.models import Cliente
 from django.db.models import Sum
 from datetime import datetime
 from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 MESES_ES = {
     1: "Enero",
