@@ -7,7 +7,7 @@ class DocumentoMaterialidadForm(forms.ModelForm):
         label="Tipo de persona",
         required=False,
         disabled=True,
-        widget=forms.TextInput(attrs={'readonly': 'readonly'})
+        widget=forms.HiddenInput()  # 👈 Oculto visualmente
     )
 
     class Meta:
@@ -18,7 +18,6 @@ class DocumentoMaterialidadForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        # 👇 Capturar el cliente ANTES del super()
         cliente = None
         if "initial" in kwargs and isinstance(kwargs["initial"].get("cliente"), Cliente):
             cliente = kwargs["initial"]["cliente"]
@@ -27,7 +26,12 @@ class DocumentoMaterialidadForm(forms.ModelForm):
 
         super().__init__(*args, **kwargs)
 
-        # Si hay cliente, determinar tipo_persona y opciones
+        # 👇 Ocultar el campo cliente (ya se asigna en la vista)
+        # No se muestra en el form
+        if 'cliente' in self.fields:
+            self.fields['cliente'].widget = forms.HiddenInput()
+
+        # Definir opciones según tipo de persona
         if cliente:
             tipo = cliente.tipo_persona.lower().strip()
             self.fields['tipo_persona'].initial = cliente.tipo_persona
@@ -59,6 +63,6 @@ class DocumentoMaterialidadForm(forms.ModelForm):
             required=True
         )
 
-        # Si estamos editando, bloquear archivo
+        # Bloquear archivo si estamos editando
         if kwargs.get("instance") and kwargs["instance"].pk:
             self.fields['archivo'].disabled = True

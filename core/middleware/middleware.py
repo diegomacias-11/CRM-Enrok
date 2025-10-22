@@ -1,13 +1,14 @@
 from django.shortcuts import redirect
 from django.urls import reverse
 
+
 class LoginRequiredMiddleware:
     """
     Middleware global:
     - Obliga a iniciar sesión en todas las vistas (excepto login/logout/reset).
     - Si el usuario pertenece al grupo 'Cliente', solo puede acceder a su panel,
-      dispersión y materialidad.
-    - Evita redirecciones infinitas o forzadas al detalle de materialidad.
+      dispersión, materialidad y activación.
+    - Evita redirecciones infinitas o errores por falta de argumentos.
     """
 
     def __init__(self, get_response):
@@ -26,14 +27,17 @@ class LoginRequiredMiddleware:
         reset_prefixes = ['/reset/']
 
         # ✅ Prefijos accesibles para usuarios del grupo "Cliente"
+        # ⚠️ No uses reverse() con URLs que requieren argumentos
         allowed_client_prefixes = [
-            reverse('panel_cliente'),          # Panel principal del cliente
-            reverse('dispersiones_cliente'),   # Reporte de dispersión
-            reverse('detalle_cliente'),        # Detalle de dispersión
-            '/materialidad/cliente/',          # Sección de materialidad
+            reverse('panel_cliente'),
+            reverse('dispersiones_cliente'),
+            reverse('detalle_cliente'),
+            '/materialidad/cliente/',
+            '/activacion/cliente/',
             reverse('materialidad_agregar'),
-            '/media/',      # 👈 permite archivos subidos
-            '/static/',     
+            reverse('activacion_agregar'),
+            '/media/',
+            '/static/',
         ]
 
         # 1️⃣ Si el usuario NO está autenticado → redirigir a login
@@ -43,14 +47,13 @@ class LoginRequiredMiddleware:
 
         # 2️⃣ Si el usuario pertenece al grupo "Cliente"
         elif request.user.groups.filter(name='Cliente').exists():
-            # Si intenta acceder a algo fuera de su área permitida
             if not any(path.startswith(p) for p in allowed_client_prefixes):
                 cliente = getattr(request.user, 'cliente_asociado', None)
-                # Redirigir correctamente a su panel (no al detalle)
+                # Si tiene cliente asociado, redirigir al panel
                 if cliente:
                     return redirect('panel_cliente')
-                else:
-                    return redirect('login')
+                # Si no tiene cliente asociado, redirigir al login
+                return redirect('login')
 
         # 3️⃣ Continuar con la ejecución normal
         return self.get_response(request)

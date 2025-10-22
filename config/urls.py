@@ -43,7 +43,8 @@ urlpatterns = [
     path('clientes/', include('clientes.urls')),
     path('dispersiones/', include('dispersiones.urls')),
     path('comisiones/', include('comisiones.urls')),
-    path('materialidad/', include('materialidad.urls'))
+    path('materialidad/', include('materialidad.urls')),
+    path('activacion/', include('activacion.urls')),
 ]
 
 if settings.DEBUG:

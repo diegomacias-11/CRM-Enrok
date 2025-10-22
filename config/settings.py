@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'core',
     'materialidad',
+    'activacion',
 ]
 
 MIDDLEWARE = [
